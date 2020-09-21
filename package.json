@@ -42,6 +42,8 @@
     "@advanced-rest-client/arc-data-generator": "^3.1.6",
     "@advanced-rest-client/arc-demo-helper": "^2.1.4",
     "@advanced-rest-client/testing-karma-sl": "^1.4.2",
+    "@anypoint-web-components/anypoint-checkbox": "^1.1.2",
+    "@anypoint-web-components/anypoint-radio-button": "^0.1.5",
     "@open-wc/eslint-config": "^3.0.0",
     "@open-wc/testing": "^2.5.26",
     "@open-wc/testing-karma": "^4.0.5",

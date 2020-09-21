@@ -126,6 +126,15 @@ declare interface RequestsListMixin {
    * True when the element is querying the database for the data.
    */
   readonly querying: boolean;
+  /**
+   * When set the selection controls are rendered
+   */
+  selectable: boolean;
+  /**
+   * When set it adds action buttons into the list elements.
+   */
+  listActions: boolean;
+
   [queryingValue]: boolean;
   [queryingProperty]: boolean;
   [pageTokenValue]: string;
@@ -141,6 +150,11 @@ declare interface RequestsListMixin {
    * Enables compatibility with Anypoint platform
    */
   compatibility: boolean;
+
+  /**
+   * List of selected requests' ids. It returns null when the `selectable` is not set.
+   */
+  selectedItems: string[]|null;
 
   connectedCallback(): void;
   disconnectedCallback(): void;

@@ -38,7 +38,12 @@ export const toggleHistoryGroupHandler = Symbol('toggleHistoryGroupHandler');
 export const requestItemTemplate = Symbol('requestItemTemplate');
 export const requestItemBodyTemplate = Symbol('requestItemBodyTemplate');
 export const requestItemLabelTemplate = Symbol('requestItemLabelTemplate');
-
+export const requestItemActionsTemplate = Symbol('requestItemActionsTemplate');
+export const requestItemSelectionTemplate = Symbol('requestItemSelectionTemplate');
+export const navigateItemHandler = Symbol('navigateItemHandler');
+export const detailsItemHandler = Symbol('detailsItemHandler');
+export const itemClickHandler = Symbol('itemClickHandler');
+export const selectedItemsValue = Symbol('selectedItemsValue');
 
 /* 
 

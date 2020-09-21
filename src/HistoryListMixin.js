@@ -16,7 +16,7 @@ import { dedupeMixin } from '@open-wc/dedupe-mixin';
 // eslint-disable-next-line no-unused-vars
 import { LitElement, html } from 'lit-element';
 import {classMap} from 'lit-html/directives/class-map.js';
-import '@anypoint-web-components/anypoint-selector/anypoint-selector.js';
+import {ifDefined} from 'lit-html/directives/if-defined';
 import '@advanced-rest-client/arc-icons/arc-icon.js';
 import '@anypoint-web-components/anypoint-button/anypoint-icon-button.js';
 import '@api-components/http-method-label/http-method-label.js';
@@ -39,6 +39,13 @@ import {
   requestItemTemplate,
   requestItemBodyTemplate,
   requestItemLabelTemplate,
+  requestItemActionsTemplate,
+  requestItemSelectionTemplate,
+  detailsItemHandler,
+  navigateItemHandler,
+  openRequest,
+  selectedItemsValue,
+  itemClickHandler,
 } from './internals.js';
 import { midnightTimestamp } from './Utils.js';
 import { RequestsListMixin } from './RequestsListMixin.js';
@@ -253,6 +260,74 @@ const mxFunction = base => {
     }
 
     /**
+     * @param {PointerEvent} e
+     */
+    [navigateItemHandler](e) {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      const node = /** @type HTMLElement */ (e.currentTarget);
+      const groupIndex = Number(node.dataset.group);
+      if (Number.isNaN(groupIndex)) {
+        return;
+      }
+      const requestIndex = Number(node.dataset.index);
+      if (Number.isNaN(requestIndex)) {
+        return;
+      }
+
+      const request = this.requests[groupIndex].requests[requestIndex].item;
+      this[openRequest](request._id);
+    }
+
+    /**
+     * @param {PointerEvent} e
+     */
+    [detailsItemHandler](e) {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      const node = /** @type HTMLElement */ (e.currentTarget);
+      const groupIndex = Number(node.dataset.group);
+      if (Number.isNaN(groupIndex)) {
+        return;
+      }
+      const requestIndex = Number(node.dataset.index);
+      if (Number.isNaN(requestIndex)) {
+        return;
+      }
+
+      const request = this.requests[groupIndex].requests[requestIndex].item;
+      this.dispatchEvent(new CustomEvent('details', {
+        detail: request,
+      }));
+    }
+
+    /**
+     * @param {PointerEvent} e
+     */
+    [itemClickHandler](e) {
+      const node = /** @type HTMLElement */ (e.currentTarget);
+      const { id } = node.dataset;
+      if (!this.selectable) {
+        this[openRequest](id);
+        return;
+      }
+      if (!this[selectedItemsValue]) {
+        this[selectedItemsValue] = [];
+      }
+      const allSelected = /** @type string[] */ (this[selectedItemsValue]);
+      if (allSelected.includes(id)) {
+        const index = allSelected.indexOf(id);
+        allSelected.splice(index, 1);
+      } else {
+        allSelected.push(id);
+      }
+      this.requestUpdate();
+      this.dispatchEvent(new CustomEvent('select'));
+    }
+
+    /**
      * @returns {TemplateResult|string} Template for the list items.
      */
     [listTemplate]() {
@@ -261,11 +336,7 @@ const mxFunction = base => {
         return '';
       }
       return html`
-      <anypoint-selector
-        selectable=".request-list-item"
-      >
       ${requests.map((item, index) => this[historyGroupHeaderTemplate](item, index))}
-      </anypoint-selector>
       `;
     }
 
@@ -316,9 +387,12 @@ const mxFunction = base => {
         title="${request.url}"
         role="menuitem"
         ?compatibility="${compatibility}"
+        @click="${this[itemClickHandler]}"
       >
+        ${this[requestItemSelectionTemplate](request._id)}
         ${this[requestItemLabelTemplate](request)}
         ${this[requestItemBodyTemplate](item)}
+        ${this[requestItemActionsTemplate](groupIndex, requestIndex)}
       </anypoint-icon-item>
       `;
     }
@@ -347,7 +421,64 @@ const mxFunction = base => {
      * @returns {TemplateResult} Template for a request's http label
      */
     [requestItemLabelTemplate](request) {
-      return html`<http-method-label method="${request.method}" slot="item-icon"></http-method-label>`;
+      const { selectable } = this;
+      const slot = selectable ?  undefined : 'item-icon';
+      const classes = { 
+        'with-margin': selectable
+      };
+      return html`<http-method-label method="${request.method}" slot="${ifDefined(slot)}" class=${classMap(classes)}></http-method-label>`;
+    }
+
+    /**
+     * @param {number} groupIndex The index of the group item in the history group array
+     * @param {number} requestIndex The index of the request in the group
+     * @returns {TemplateResult|string} Template for a request's list item actions
+     */
+    [requestItemActionsTemplate](groupIndex, requestIndex) {
+      if (!this.listActions) {
+        return '';
+      }
+      const { compatibility } = this;
+      return html`
+      <anypoint-button
+        data-group="${groupIndex}"
+        data-index="${requestIndex}"
+        class="list-action-button list-secondary-action"
+        data-action="item-detail"
+        ?compatibility="${compatibility}"
+        @click="${this[detailsItemHandler]}"
+        title="Open request details dialog"
+      >Details</anypoint-button>
+      <anypoint-button
+        data-group="${groupIndex}"
+        data-index="${requestIndex}"
+        class="list-action-button list-main-action"
+        data-action="open-item"
+        @click="${this[navigateItemHandler]}"
+        ?compatibility="${compatibility}"
+        emphasis="high"
+        title="Open request in the workspace"
+      >Open</anypoint-button>
+      `;
+    }
+
+    /**
+     * @param {string} id The id of the request
+     * @returns {TemplateResult|string} Template for a selection control
+     */
+    [requestItemSelectionTemplate](id) {
+      if (!this.selectable) {
+        return '';
+      }
+      const allSelected = /** @type string[] */ (this[selectedItemsValue] || []);
+      const selected = allSelected.includes(id);
+      return html`
+      <anypoint-checkbox
+        slot="item-icon"
+        ?checked="${selected}"
+        aria-label="Select or unselect this request"
+      ></anypoint-checkbox>
+      `;
     }
   }
   return HistoryListMixinImpl;

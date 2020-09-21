@@ -36,7 +36,7 @@ export default css`
 }
 
 http-method-label {
-  font-size: 14px;
+  font-size: 12px;
   height: 52px;
   width: 52px;
   display: flex;
@@ -47,6 +47,10 @@ http-method-label {
   text-overflow: ellipsis;
   overflow: hidden;
   margin: 0; 
+}
+
+http-method-label.with-margin {
+  margin-right: 12px;
 }
 
 :host([listtype="comfortable"]) anypoint-item-body,
@@ -90,5 +94,9 @@ http-method-label {
 
 :host([listtype="compact"]) .list-action-button {
   height: 24px;
+}
+
+anypoint-button {
+  box-shadow: none;
 }
 `;

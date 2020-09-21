@@ -52,6 +52,7 @@ import {
   loadPage,
   prepareQuery,
   handleError,
+  selectedItemsValue,
 } from './internals.js';
 
 /** @typedef {import('@advanced-rest-client/arc-models').ARCRequestDeletedEvent} ARCRequestDeletedEvent */
@@ -141,6 +142,14 @@ const mxFunction = base => {
          * Enables compatibility with Anypoint platform
          */
         compatibility: { type: Boolean },
+        /**
+         * When set the selection controls are rendered
+         */
+        selectable: { type: Boolean },
+        /**
+         * When set it adds action buttons into the list elements.
+         */
+        listActions: { type: Boolean },
       };
     }
 
@@ -222,6 +231,28 @@ const mxFunction = base => {
       return !!isSearch && !querying && !(requests && requests.length);
     }
 
+    /**
+     * @returns {string[]|null} List of selected ids when `selectable` is set or `null` otherwise
+     */
+    get selectedItems() {
+      if (!this.selectable) {
+        return null;
+      }
+      return this[selectedItemsValue] || [];
+    }
+
+    /**
+     * @param {string[]} value List of requests to select in the view. This has no effect when `selectable` is not set. 
+     */
+    set selectedItems(value) {
+      const old = this[selectedItemsValue] || [];
+      if (idsArrayEqual(old, value)) {
+        return;
+      }
+      this[selectedItemsValue] = value;
+      this.requestUpdate();
+    }
+
     constructor() {
       super();
       this[requestDeletedHandler] = this[requestDeletedHandler].bind(this);
@@ -255,6 +286,8 @@ const mxFunction = base => {
       this.isSearch = false;
       this.draggableEnabled = false;
       this.compatibility = false;
+      this.selectable = false;
+      this.listActions = false;
     }
     
 

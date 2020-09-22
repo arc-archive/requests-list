@@ -44,6 +44,24 @@ export const navigateItemHandler = Symbol('navigateItemHandler');
 export const detailsItemHandler = Symbol('detailsItemHandler');
 export const itemClickHandler = Symbol('itemClickHandler');
 export const selectedItemsValue = Symbol('selectedItemsValue');
+export const selectableValue = Symbol('selectableValue');
+
+export const hasProjectsValue = Symbol('hasProjectsValue');
+export const projectsValue = Symbol('projectsValue');
+export const refreshProjectsList = Symbol('refreshProjectsList');
+export const setProjects = Symbol('setProjects');
+export const projectDeleteHandler = Symbol('projectDeleteHandler');
+export const notifyProject = Symbol('notifyProject');
+export const computeProjectsAutocomplete = Symbol('computeProjectsAutocomplete');
+export const computeProjectSelection = Symbol('computeProjectSelection');
+
+export const busyTemplate = Symbol('busyTemplate');
+export const unavailableTemplate = Symbol('unavailableTemplate');
+export const contentActionsTemplate = Symbol('contentActionsTemplate');
+export const contentActionHandler = Symbol('contentActionHandler');
+export const searchIconTemplate = Symbol('searchIconTemplate');
+export const searchInputTemplate = Symbol('searchInputTemplate');
+export const searchHandler = Symbol('searchHandler');
 
 /* 
 

@@ -11,6 +11,7 @@ import {
 import {
   DataExport
 } from '@advanced-rest-client/arc-types';
+import { TemplateResult } from 'lit-html';
 import {
   listTypeValue,
   hasTwoLinesValue,
@@ -39,6 +40,13 @@ import {
   loadPage,
   prepareQuery,
   handleError,
+  requestItemSelectionTemplate,
+  requestItemActionsTemplate,
+  detailsItemHandler,
+  navigateItemHandler,
+  requestItemLabelTemplate,
+  itemClickHandler,
+  listTemplate,
 } from './internals.js';
 
 declare function RequestsListMixin<T extends new (...args: any[]) => {}>(base: T): T & RequestsListMixinConstructor;
@@ -68,12 +76,14 @@ declare interface RequestsListMixin {
    * projects list is processed.
    *
    * This property must be set.
+   * @attribute
    */
   type: 'saved'|'history'|'project';
 
   /**
    * Project datastore ID to display.
    * This should be set only when type is `project`
+   * @attribute
    */
   projectId?: string;
   /**
@@ -84,6 +94,7 @@ declare interface RequestsListMixin {
    * - `default` or empty - regular list view
    * - `comfortable` - enables MD single line list item vie (52px height)
    * - `compact` - enables list that has 40px height (touch recommended)
+   * @attribute
    */
   listType: string;
   /**
@@ -105,20 +116,24 @@ declare interface RequestsListMixin {
   [hasTwoLinesValue]: boolean;
   /**
    * Single page query limit.
+   * @attribute
    */
   pageLimit: number;
   /**
    * When set the datastore query is performed with `detailed` option
+   * @attribute
    */
   detailedSearch: number;
   /**
    * When set it won't query for data automatically when attached to the DOM.
+   * @attribute
    */
   noAuto: boolean;
   /**
    * When set this component is in search mode.
    * This means that the list won't be loaded automatically and
    * some operations not related to search are disabled.
+   * @attribute
    */
   isSearch: boolean;
 
@@ -128,10 +143,12 @@ declare interface RequestsListMixin {
   readonly querying: boolean;
   /**
    * When set the selection controls are rendered
+   * @attribute
    */
   selectable: boolean;
   /**
    * When set it adds action buttons into the list elements.
+   * @attribute
    */
   listActions: boolean;
 
@@ -144,10 +161,12 @@ declare interface RequestsListMixin {
    * Adds draggable property to the request list item element.
    * The `dataTransfer` object has `arc/request-object` mime type with
    * serialized JSON with request model.
+   * @attribute
    */
   draggableEnabled: boolean;
   /**
    * Enables compatibility with Anypoint platform
+   * @attribute
    */
   compatibility: boolean;
 
@@ -155,6 +174,18 @@ declare interface RequestsListMixin {
    * List of selected requests' ids. It returns null when the `selectable` is not set.
    */
   selectedItems: string[]|null;
+
+  /**
+   * True when there's no requests after refreshing the state.
+   */
+  readonly dataUnavailable: boolean;
+  /**
+   * Computed value. True when the query has been performed and no items
+   * has been returned. It is different from `listHidden` where less
+   * conditions has to be checked. It is set to true when it doesn't
+   * have items, is not loading and is search.
+   */
+  readonly searchListEmpty: boolean;
 
   connectedCallback(): void;
   disconnectedCallback(): void;
@@ -311,6 +342,13 @@ declare interface RequestsListMixin {
   [loadPage](): Promise<void>;
 
   /**
+   * Prepares a query string to search the data store.
+   * @param query User search term
+   * @returns Processed query
+   */
+  [prepareQuery](query: string): string;
+
+  /**
    * Handles any error.
    */
   [handleError](cause: Error): void;
@@ -319,4 +357,48 @@ declare interface RequestsListMixin {
    * Appends a list of requests to the history list.
    */
   [appendItems](requests: any[]): Promise<void>;
+
+  /**
+   * A handler for the click on the `open` request button.
+   * The target has to have `data-id` set to the request id.
+   */
+  [navigateItemHandler](e: PointerEvent): void;
+
+  /**
+   * A handler for the click on the `details` request button.
+   * The target has to have `data-id` set to the request id.
+   */
+  [detailsItemHandler](e: PointerEvent): void;
+
+  /**
+   * A handler for list item click. Depending on the `selectable` property state
+   * it navigates to the request (false) or toggles item selection (true).
+   * 
+   * The target has to have `data-id` set to the request id.
+   */
+  [itemClickHandler](e: PointerEvent): void;
+
+  /**
+   * This method to be implemented by the element to render the list of items.
+   * @returns Template for the list items.
+   */
+  [listTemplate](): string|TemplateResult;
+
+  /**
+   * @param id The id of the request
+   * @returns Template for a selection control
+   */
+  [requestItemSelectionTemplate](id: string): TemplateResult|string;
+
+  /**
+   * @param id The id of the request
+   * @returns Template for a request's list item actions
+   */
+  [requestItemActionsTemplate](id: string): TemplateResult|string;
+
+  /**
+   * @param method The HTTP method name.
+   * @returns Template for a request's http label
+   */
+  [requestItemLabelTemplate](method: string): TemplateResult|string;
 }

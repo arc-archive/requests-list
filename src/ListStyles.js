@@ -12,6 +12,7 @@ export default css`
   padding: 4px 16px;
   display: flex;
   align-items: center;
+  background-color: #eceff1;
 }
 
 .history-group-label {
@@ -70,7 +71,6 @@ http-method-label.with-margin {
   height: 40px;
   width: 40px;
   padding-top: 8px;
-  font-size: 13px;
 }
 
 :host([listtype="compact"]) http-method-label {
@@ -94,6 +94,20 @@ http-method-label.with-margin {
 
 :host([listtype="compact"]) .list-action-button {
   height: 24px;
+}
+
+:host([listtype="comfortable"]) [secondary],
+:host([listtype="compact"]) [secondary] {
+  margin-top: 0px;
+  font-size: 80%;
+}
+:host([listtype="comfortable"]) .history-group-toggle {
+  width: 32px;
+  height: 32px;
+}
+:host([listtype="compact"]) .history-group-toggle {
+  width: 28px;
+  height: 28px;
 }
 
 anypoint-button {

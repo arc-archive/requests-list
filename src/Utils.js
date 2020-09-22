@@ -1,4 +1,21 @@
 /** @typedef {import('@advanced-rest-client/arc-models').ARCSavedRequest} ARCSavedRequest */
+/** @typedef {import('@advanced-rest-client/arc-models').ARCProject} ARCProject */
+
+/**
+ * Sort function used to sort projects in order.
+ * @param {ARCProject} a
+ * @param {ARCProject} b
+ * @return {number}
+ */
+export function projectsSortFn(a, b) {
+  if (a.order > b.order) {
+    return 1;
+  }
+  if (a.order < b.order) {
+    return -1;
+  }
+  return 0;
+}
 
 /**
  * Sorts requests list by `projectOrder` property

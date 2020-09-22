@@ -14,9 +14,12 @@ the License.
 
 import { dedupeMixin } from '@open-wc/dedupe-mixin';
 // eslint-disable-next-line no-unused-vars
-import { LitElement } from 'lit-element';
+import { LitElement, html } from 'lit-element';
+import {classMap} from 'lit-html/directives/class-map.js';
+import {ifDefined} from 'lit-html/directives/if-defined.js';
 import { ArcModelEventTypes, ArcModelEvents } from '@advanced-rest-client/arc-models';
 import { DataImportEventTypes, ArcNavigationEvents, ExportEvents } from '@advanced-rest-client/arc-events';
+import '@advanced-rest-client/arc-icons/arc-icon.js';
 import { 
   projectLegacySort, 
   validateRequestType, 
@@ -53,6 +56,14 @@ import {
   prepareQuery,
   handleError,
   selectedItemsValue,
+  selectableValue,
+  listTemplate,
+  requestItemSelectionTemplate,
+  requestItemActionsTemplate,
+  detailsItemHandler,
+  navigateItemHandler,
+  requestItemLabelTemplate,
+  itemClickHandler,
 } from './internals.js';
 
 /** @typedef {import('@advanced-rest-client/arc-models').ARCRequestDeletedEvent} ARCRequestDeletedEvent */
@@ -66,6 +77,7 @@ import {
 /** @typedef {import('@advanced-rest-client/arc-types').DataExport.ProviderOptions} ProviderOptions */
 /** @typedef {import('@advanced-rest-client/arc-types').DataExport.ArcExportResult} ArcExportResult */
 /** @typedef {import('@advanced-rest-client/arc-models').ARCModelStateDeleteEvent} ARCModelStateDeleteEvent */
+/** @typedef {import('lit-element').TemplateResult} TemplateResult */
 
 /**
  * @param {typeof LitElement} base
@@ -91,11 +103,13 @@ const mxFunction = base => {
          * projects list is processed.
          *
          * This property must be set.
+         * @attribute
          */
         type: { type: String },
         /**
          * Project datastore ID to display.
          * This should be set only when type is `project`
+         * @attribute
          */
         projectId: { type: String },
         /**
@@ -106,6 +120,7 @@ const mxFunction = base => {
          * - `default` or empty - regular list view
          * - `comfortable` - enables MD single line list item vie (52px height)
          * - `compact` - enables list that has 40px height (touch recommended)
+         * @attribute
          */
         listType: { type: String, reflect: true },
         /**
@@ -116,38 +131,46 @@ const mxFunction = base => {
         project: { type: Object },
         /**
          * Single page query limit.
+         * @attribute
          */
         pageLimit: { type: Number },
         /**
          * When set this component is in search mode.
          * This means that the list won't be loaded automatically and
          * some operations not related to search are disabled.
+         * @attribute
          */
         isSearch: { type: Boolean },
         /**
          * When set it won't query for data automatically when attached to the DOM.
+         * @attribute
          */
         noAuto: { type: Boolean },
         /**
          * When set the datastore query is performed with `detailed` option
+         * @attribute
          */
         detailedSearch: { type: Boolean },
         /**
          * Adds draggable property to the request list item element.
          * The `dataTransfer` object has `arc/request-object` mime type with
          * serialized JSON with request model.
+         * @attribute
          */
         draggableEnabled: { type: Boolean },
         /**
          * Enables compatibility with Anypoint platform
+         * @attribute
          */
         compatibility: { type: Boolean },
         /**
          * When set the selection controls are rendered
+         * @attribute
          */
         selectable: { type: Boolean },
         /**
          * When set it adds action buttons into the list elements.
+         * @attribute
          */
         listActions: { type: Boolean },
       };
@@ -253,6 +276,22 @@ const mxFunction = base => {
       this.requestUpdate();
     }
 
+    get selectable() {
+      return this[selectableValue];
+    }
+
+    set selectable(value) {
+      const old = this[selectableValue];
+      if (old === value) {
+        return;
+      }
+      this[selectableValue] = value;
+      this.requestUpdate();
+      if (this[selectedItemsValue]) {
+        this[selectedItemsValue] = undefined;
+      }
+    }
+
     constructor() {
       super();
       this[requestDeletedHandler] = this[requestDeletedHandler].bind(this);
@@ -278,7 +317,6 @@ const mxFunction = base => {
        * @type {string}
        */
       this.projectId = undefined;
-      
   
       this.pageLimit = 150;
       this.detailedSearch = false;
@@ -785,6 +823,131 @@ const mxFunction = base => {
         }
       }));
       throw cause;
+    }
+
+    /**
+     * @param {PointerEvent} e
+     */
+    [navigateItemHandler](e) {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      const node = /** @type HTMLElement */ (e.currentTarget);
+      const { id } = node.dataset;
+      if (!id) {
+        return;
+      }
+      this[openRequest](id);
+    }
+
+    /**
+     * @param {PointerEvent} e
+     */
+    [detailsItemHandler](e) {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      const node = /** @type HTMLElement */ (e.currentTarget);
+      const { id } = node.dataset;
+      if (!id) {
+        return;
+      }
+      this.dispatchEvent(new CustomEvent('details', {
+        detail: id,
+      }));
+    }
+
+    /**
+     * @param {PointerEvent} e
+     */
+    [itemClickHandler](e) {
+      const node = /** @type HTMLElement */ (e.currentTarget);
+      const { id } = node.dataset;
+      if (!this.selectable) {
+        this[openRequest](id);
+        return;
+      }
+      if (!this[selectedItemsValue]) {
+        this[selectedItemsValue] = /** @type string[] */ ([]);
+      }
+      const allSelected = /** @type string[] */ (this[selectedItemsValue]);
+      if (allSelected.includes(id)) {
+        const index = allSelected.indexOf(id);
+        allSelected.splice(index, 1);
+      } else {
+        allSelected.push(id);
+      }
+      this.requestUpdate();
+      this.dispatchEvent(new CustomEvent('select'));
+    }
+
+    /**
+     * @returns {string} Template for the list items.
+     */
+    [listTemplate]() {
+      return '';
+    }
+
+    /**
+     * @param {string} id The id of the request
+     * @returns {TemplateResult|string} Template for a selection control
+     */
+    [requestItemSelectionTemplate](id) {
+      if (!this.selectable) {
+        return '';
+      }
+      const allSelected = /** @type string[] */ (this[selectedItemsValue] || []);
+      const selected = allSelected.includes(id);
+      return html`
+      <anypoint-checkbox
+        slot="item-icon"
+        ?checked="${selected}"
+        aria-label="Select or unselect this request"
+      ></anypoint-checkbox>
+      `;
+    }
+
+    /**
+     * @param {string} id The id of the request
+     * @returns {TemplateResult|string} Template for a request's list item actions
+     */
+    [requestItemActionsTemplate](id) {
+      if (!this.listActions) {
+        return '';
+      }
+      const { compatibility } = this;
+      return html`
+      <anypoint-button
+        data-id="${id}"
+        class="list-action-button list-secondary-action"
+        data-action="item-detail"
+        ?compatibility="${compatibility}"
+        @click="${this[detailsItemHandler]}"
+        title="Open request details dialog"
+      >Details</anypoint-button>
+      <anypoint-button
+        data-id="${id}"
+        class="list-action-button list-main-action"
+        data-action="open-item"
+        @click="${this[navigateItemHandler]}"
+        ?compatibility="${compatibility}"
+        emphasis="high"
+        title="Open request in the workspace"
+      >Open</anypoint-button>
+      `;
+    }
+
+    /**
+     * @param {string} method The HTTP method name.
+     * @returns {TemplateResult} Template for a request's http label
+     */
+    [requestItemLabelTemplate](method) {
+      const { selectable } = this;
+      const slot = selectable ?  undefined : 'item-icon';
+      const classes = { 
+        'with-margin': selectable
+      };
+      return html`<http-method-label method="${method}" slot="${ifDefined(slot)}" class=${classMap(classes)}></http-method-label>`;
     }
   }
   return RequestsListMixinImpl;

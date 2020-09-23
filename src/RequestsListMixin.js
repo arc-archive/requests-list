@@ -20,6 +20,12 @@ import {ifDefined} from 'lit-html/directives/if-defined.js';
 import { ArcModelEventTypes, ArcModelEvents } from '@advanced-rest-client/arc-models';
 import { DataImportEventTypes, ArcNavigationEvents, ExportEvents } from '@advanced-rest-client/arc-events';
 import '@advanced-rest-client/arc-icons/arc-icon.js';
+import '@anypoint-web-components/anypoint-button/anypoint-icon-button.js';
+import '@api-components/http-method-label/http-method-label.js';
+import '@anypoint-web-components/anypoint-item/anypoint-icon-item.js';
+import '@anypoint-web-components/anypoint-item/anypoint-item-body.js';
+import '@anypoint-web-components/anypoint-collapse/anypoint-collapse.js';
+import '@github/time-elements';
 import { 
   projectLegacySort, 
   validateRequestType, 

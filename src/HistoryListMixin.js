@@ -16,12 +16,6 @@ import { dedupeMixin } from '@open-wc/dedupe-mixin';
 // eslint-disable-next-line no-unused-vars
 import { LitElement, html } from 'lit-element';
 import {classMap} from 'lit-html/directives/class-map.js';
-import '@anypoint-web-components/anypoint-button/anypoint-icon-button.js';
-import '@api-components/http-method-label/http-method-label.js';
-import '@anypoint-web-components/anypoint-item/anypoint-icon-item.js';
-import '@anypoint-web-components/anypoint-item/anypoint-item-body.js';
-import '@anypoint-web-components/anypoint-collapse/anypoint-collapse.js';
-import '@github/time-elements';
 import {
   appendItems,
   createHistoryGroup,

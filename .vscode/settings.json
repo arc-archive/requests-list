@@ -5,6 +5,7 @@
     "noautoprojects",
     "projectlist",
     "projectschange",
-    "queryingchange"
+    "queryingchange",
+    "undelete"
   ]
 }

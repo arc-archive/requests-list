@@ -64,6 +64,7 @@ import {
   navigateItemHandler,
   requestItemLabelTemplate,
   itemClickHandler,
+  notifySelection,
 } from './internals.js';
 
 /** @typedef {import('@advanced-rest-client/arc-models').ARCRequestDeletedEvent} ARCRequestDeletedEvent */
@@ -367,6 +368,7 @@ const mxFunction = base => {
       this.isSearch = false;
       this[queryingProperty] = false;
       this.requests = undefined;
+      this[selectedItemsValue] = /** @type string[] */ ([]);
     }
 
     /**
@@ -878,6 +880,10 @@ const mxFunction = base => {
         allSelected.push(id);
       }
       this.requestUpdate();
+      this[notifySelection]();
+    }
+
+    [notifySelection]() {
       this.dispatchEvent(new CustomEvent('select'));
     }
 

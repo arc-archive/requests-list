@@ -41,10 +41,12 @@ import {
   requestItemSelectionTemplate,
   selectedItemsValue,
   itemClickHandler,
+  requestDeletedHandler,
 } from './internals.js';
 import { midnightTimestamp } from './Utils.js';
 import { RequestsListMixin } from './RequestsListMixin.js';
 
+/** @typedef {import('@advanced-rest-client/arc-models').ARCRequestDeletedEvent} ARCRequestDeletedEvent */
 /** @typedef {import('@advanced-rest-client/arc-models').ARCHistoryRequest} ARCHistoryRequest */
 /** @typedef {import('@advanced-rest-client/arc-models').ARCModelStateDeleteEvent} ARCModelStateDeleteEvent */
 /** @typedef {import('lit-element').TemplateResult} TemplateResult */
@@ -233,14 +235,38 @@ const mxFunction = base => {
       for (let i = 0, len = requests.length; i < len; i++) {
         const group = requests[i];
         const index = group.requests.findIndex((item) => item.item._id === request._id);
-        if (index !== -1) {
-          group.requests.splice(index, 1);
-          if (group.requests.length === 0) {
-            requests.splice(i);
-          }
-          this.requestUpdate();
-          return;
+        if (index === -1) {
+          continue;
         }
+        group.requests[index].item = request;
+        this.requestUpdate();
+        return;
+      }
+      this[appendItems]([request]);
+    }
+
+    /**
+     * Overrides the delete request handler to remove the appropriate request.
+     * @param {ARCRequestDeletedEvent} e
+     */
+    [requestDeletedHandler](e) {
+      const { requests=[] } = this;
+      if (!Array.isArray(requests) || !requests.length) {
+        return;
+      }
+      const { id } = e;
+      for (let i = 0, len = requests.length; i < len; i++) {
+        const group = requests[i];
+        const index = group.requests.findIndex((item) => item.item._id === id);
+        if (index === -1) {
+          continue;
+        }
+        group.requests.splice(index, 1);
+        if (group.requests.length === 0) {
+          requests.splice(i, 1);
+        }
+        this.requestUpdate();
+        return;
       }
     }
 

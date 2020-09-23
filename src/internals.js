@@ -45,6 +45,7 @@ export const detailsItemHandler = Symbol('detailsItemHandler');
 export const itemClickHandler = Symbol('itemClickHandler');
 export const selectedItemsValue = Symbol('selectedItemsValue');
 export const selectableValue = Symbol('selectableValue');
+export const notifySelection = Symbol('notifySelection');
 
 export const hasProjectsValue = Symbol('hasProjectsValue');
 export const projectsValue = Symbol('projectsValue');
@@ -62,6 +63,30 @@ export const contentActionHandler = Symbol('contentActionHandler');
 export const searchIconTemplate = Symbol('searchIconTemplate');
 export const searchInputTemplate = Symbol('searchInputTemplate');
 export const searchHandler = Symbol('searchHandler');
+export const searchEmptyTemplate = Symbol('searchEmptyTemplate');
+export const toggleSelectAllValue = Symbol('toggleSelectAllValue');
+export const listScrollHandler = Symbol('listScrollHandler');
+export const confirmDeleteAllTemplate = Symbol('confirmDeleteAllTemplate');
+export const deleteAction = Symbol('deleteAction');
+export const deleteAll = Symbol('deleteAll');
+export const deleteAllDialogValue = Symbol('deleteAllDialogValue');
+export const deleteSelected = Symbol('deleteSelected');
+export const deleteCancel = Symbol('deleteCancel');
+export const deleteConfirm = Symbol('deleteConfirm');
+export const deleteLatestList = Symbol('deleteLatestList');
+export const deleteUndoOpened = Symbol('deleteUndoOpened');
+export const deleteUndoTemplate = Symbol('deleteUndoTemplate');
+export const deleteUndoAction = Symbol('deleteUndoAction');
+export const snackbarClosedHandler = Symbol('snackbarClosedHandler');
+export const exportAction = Symbol('exportAction');
+export const exportAll = Symbol('exportAll');
+export const exportSelected = Symbol('exportSelected');
+export const exportOptionsTemplate = Symbol('exportOptionsTemplate');
+export const exportOptionsOpened = Symbol('exportOptionsOpened');
+export const exportOverlayClosed = Symbol('exportOverlayClosed');
+export const exportCancel = Symbol('exportCancel');
+export const exportAccept = Symbol('exportAccept');
+export const driveExportedTemplate = Symbol('driveExportedTemplate');
 
 /* 
 

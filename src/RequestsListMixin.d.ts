@@ -123,7 +123,7 @@ declare interface RequestsListMixin {
    * When set the datastore query is performed with `detailed` option
    * @attribute
    */
-  detailedSearch: number;
+  detailedSearch: boolean;
   /**
    * Adds draggable property to the request list item element.
    * The `dataTransfer` object has `arc/request-object` mime type with

@@ -11,7 +11,7 @@ import {
   computeProjectsAutocomplete,
   computeProjectSelection,
   refreshProjectsList,
-  makingQueryValue,
+  makingProjectsQueryValue,
 } from '../src/internals.js';
 
 /** @typedef {import('./projects-consumer-element').ProjectsConsumerElement} ProjectsConsumerElement */
@@ -215,24 +215,24 @@ describe('ProjectsListConsumerMixin', () => {
       assert.isTrue(called);
     });
 
-    it('Sets [makingQueryValue] flag', async () => {
+    it('Sets [makingProjectsQueryValue] flag', async () => {
       element[refreshProjectsList] = async () => { };
       element.refreshProjects();
-      assert.isTrue(element[makingQueryValue]);
+      assert.isTrue(element[makingProjectsQueryValue]);
       await aTimeout(0);
     });
 
-    it('Clears [makingQueryValue] flag after callback', async () => {
+    it('Clears [makingProjectsQueryValue] flag after callback', async () => {
       element[refreshProjectsList] = async () => { };
       element.refreshProjects();
       await aTimeout(0);
-      assert.isFalse(element[makingQueryValue]);
+      assert.isFalse(element[makingProjectsQueryValue]);
     });
 
-    it('does nothing when [makingQueryValue] flag is set', async () => {
+    it('does nothing when [makingProjectsQueryValue] flag is set', async () => {
       let called = false;
       element[refreshProjectsList] = async () => { called = true };
-      element[makingQueryValue] = true;
+      element[makingProjectsQueryValue] = true;
       element.refreshProjects();
       await aTimeout(0);
       assert.isFalse(called);

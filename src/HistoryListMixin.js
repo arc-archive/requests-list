@@ -246,7 +246,7 @@ const mxFunction = base => {
      * @param {ARCRequestDeletedEvent} e
      */
     [requestDeletedHandler](e) {
-      const { requests=[] } = this;
+      const { requests } = this;
       if (!Array.isArray(requests) || !requests.length) {
         return;
       }

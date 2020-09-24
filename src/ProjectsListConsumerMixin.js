@@ -169,6 +169,9 @@ const mxFunction = base => {
      * @param {ARCProjectUpdatedEvent} e
      */
     async [projectChangeHandler](e) {
+      if (super[projectChangeHandler]) {
+        super[projectChangeHandler](e);
+      }
       const record = e.changeRecord;
       let item;
       if (record.item) {

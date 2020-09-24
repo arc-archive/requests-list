@@ -459,10 +459,7 @@ const mxFunction = base => {
      * @param {ARCRequestUpdatedEvent} e
      */
     async [requestChangedHandler](e) {
-      if (e.cancelable) {
-        return;
-      }
-      const type = this[readType]();
+      const { type } = this;
       const record = e.changeRecord;
       let item;
       if (!record.item) {
@@ -495,7 +492,8 @@ const mxFunction = base => {
       if (![this.type, 'all'].includes(store)) {
         return;
       }
-      this.refresh();
+      this.reset();
+      this.requestUpdate();
     }
 
     /**
@@ -520,8 +518,7 @@ const mxFunction = base => {
       }
       const index = requests.findIndex((r) => r._id === request._id);
       if (index !== -1) {
-        const saved = /** @type ARCSavedRequest */ (requests[index]);
-        if (isProjectRequest(saved, projectId)) {
+        if (isProject) {
           requests[index] = request;
         } else {
           requests.splice(index, 1);
@@ -554,6 +551,7 @@ const mxFunction = base => {
       const index = requests.findIndex((r) => r._id === request._id);
       if (index === -1) {
         // add to the beginning of the list
+        // TODO: this should be ordered somehow
         requests.unshift(request);
       } else {
         requests[index] = request;
@@ -642,7 +640,7 @@ const mxFunction = base => {
      */
     async [persistRequestsOrder]() {
       const { project } = this;
-      if (project) {
+      if (!project) {
         throw new Error('"project" is not set');
       }
       const { requests } = this;
@@ -677,11 +675,12 @@ const mxFunction = base => {
       }
       this.project = item;
       this[updateProjectOrder](item);
+      this.requestUpdate();
     }
 
     /**
      * Updates requests order when project changed.
-     * It reorder requests array for changed project order. It won't change
+     * It reorders requests array for changed project order. It won't change
      * requests array when order is the same. It also won't change order when
      * request list is different that project's requests list.
      * @param {ARCProject} project Changed project

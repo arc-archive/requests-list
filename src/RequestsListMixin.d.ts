@@ -8,9 +8,6 @@ import {
   ARCProjectUpdatedEvent,
   ARCModelStateDeleteEvent,
 } from '@advanced-rest-client/arc-models';
-import {
-  DataExport
-} from '@advanced-rest-client/arc-types';
 import { TemplateResult } from 'lit-html';
 import {
   listTypeValue,
@@ -21,32 +18,34 @@ import {
   dataImportHandler,
   dataDestroyHandler,
   readType,
-  updateBulk,
-  updateRequest,
   updateListStyles,
   applyListStyles,
   persistRequestsOrder,
   projectRequestChanged,
   requestChanged,
   updateProjectOrder,
-  dispatchExportData,
   openRequest,
   readProjectRequests,
   queryingValue,
   queryingProperty,
   pageTokenValue,
   makingQueryValue,
-  appendItems,
   loadPage,
   prepareQuery,
   handleError,
+  selectedItemsValue,
+  selectableValue,
+  listTemplate,
   requestItemSelectionTemplate,
   requestItemActionsTemplate,
   detailsItemHandler,
   navigateItemHandler,
   requestItemLabelTemplate,
   itemClickHandler,
-  listTemplate,
+  notifySelection,
+  dragStartHandler,
+  dropTargetTemplate,
+  unavailableTemplate,
 } from './internals.js';
 
 declare function RequestsListMixin<T extends new (...args: any[]) => {}>(base: T): T & RequestsListMixinConstructor;
@@ -103,32 +102,11 @@ declare interface RequestsListMixin {
    * when `readProjectRequests()` is called.
    */
   project?: ARCProject;
-
-  /**
-   * Computed value, true when the project has requests.
-   */
-  readonly hasRequests: boolean;
-  /**
-   * True if the list item should be consisted of two lines of description.
-   */
-  readonly hasTwoLines: boolean;
-  [listTypeValue]: string;
-  [hasTwoLinesValue]: boolean;
   /**
    * Single page query limit.
    * @attribute
    */
   pageLimit: number;
-  /**
-   * When set the datastore query is performed with `detailed` option
-   * @attribute
-   */
-  detailedSearch: number;
-  /**
-   * When set it won't query for data automatically when attached to the DOM.
-   * @attribute
-   */
-  noAuto: boolean;
   /**
    * When set this component is in search mode.
    * This means that the list won't be loaded automatically and
@@ -136,27 +114,16 @@ declare interface RequestsListMixin {
    * @attribute
    */
   isSearch: boolean;
-
   /**
-   * True when the element is querying the database for the data.
-   */
-  readonly querying: boolean;
-  /**
-   * When set the selection controls are rendered
+   * When set it won't query for data automatically when attached to the DOM.
    * @attribute
    */
-  selectable: boolean;
+  noAuto: boolean;
   /**
-   * When set it adds action buttons into the list elements.
+   * When set the datastore query is performed with `detailed` option
    * @attribute
    */
-  listActions: boolean;
-
-  [queryingValue]: boolean;
-  [queryingProperty]: boolean;
-  [pageTokenValue]: string;
-  [makingQueryValue]: boolean;
-
+  detailedSearch: number;
   /**
    * Adds draggable property to the request list item element.
    * The `dataTransfer` object has `arc/request-object` mime type with
@@ -174,7 +141,35 @@ declare interface RequestsListMixin {
    * List of selected requests' ids. It returns null when the `selectable` is not set.
    */
   selectedItems: string[]|null;
+  /**
+   * When set the selection controls are rendered
+   * @attribute
+   */
+  selectable: boolean;
+  /**
+   * When set it adds action buttons into the list elements.
+   * @attribute
+   */
+  listActions: boolean;
+  /**
+   * Computed value, true when the project has requests.
+   */
+  readonly hasRequests: boolean;
+  /**
+   * True when the element is querying the database for the data.
+   */
+  readonly querying: boolean;
+  [listTypeValue]: string;
+  /**
+   * True if the list item should be consisted of two lines of description.
+   */
+  readonly hasTwoLines: boolean;
+  [hasTwoLinesValue]: boolean;
 
+  [queryingValue]: boolean;
+  [queryingProperty]: boolean;
+  [pageTokenValue]: string;
+  [makingQueryValue]: boolean;
   /**
    * True when there's no requests after refreshing the state.
    */
@@ -186,6 +181,8 @@ declare interface RequestsListMixin {
    * have items, is not loading and is search.
    */
   readonly searchListEmpty: boolean;
+  [selectedItemsValue]: string[];
+  [selectableValue]: boolean;
 
   connectedCallback(): void;
   disconnectedCallback(): void;
@@ -264,21 +261,6 @@ declare interface RequestsListMixin {
    * @returns The type used in the ARC request model.
    */
   [readType](): string;
-  
-  /**
-   * Updates requests in a bulk operation.
-   * 
-   * @param items Request items to save
-   */
-  [updateBulk](items: (ARCSavedRequest|ARCHistoryRequest)[]): Promise<ARCEntityChangeRecord<ARCHistoryRequest|ARCSavedRequest>[]>;
-
-  /**
-   * Dispatches request update event.
-   * 
-   * @param {} request The request to update.
-   * @return {} Promise resolved when the request object is updated.
-   */
-  [updateRequest](request: ARCSavedRequest|ARCHistoryRequest): Promise<ARCEntityChangeRecord<ARCHistoryRequest|ARCSavedRequest>>;
 
   /**
    * Updates icon size CSS variable and notifies resize on the list when
@@ -319,16 +301,6 @@ declare interface RequestsListMixin {
   [updateProjectOrder](project: ARCProject): boolean;
 
   /**
-   * Dispatches export event
-   * 
-   * @param requests List of request to export.
-   * @param exportOptions Export configuration options
-   * @param providerOptions Provider configuration options.
-   * @returns A promise resolved to the provider's return value.
-   */
-  [dispatchExportData](requests: (ARCSavedRequest|ARCHistoryRequest)[], exportOptions: DataExport.ExportOptions, providerOptions: DataExport.ProviderOptions): Promise<DataExport.ArcExportResult>;
-
-  /**
    * Dispatches navigate event to open a request
    * @param id The id of the request to open.
    */
@@ -354,11 +326,6 @@ declare interface RequestsListMixin {
   [handleError](cause: Error): void;
 
   /**
-   * Appends a list of requests to the history list.
-   */
-  [appendItems](requests: any[]): Promise<void>;
-
-  /**
    * A handler for the click on the `open` request button.
    * The target has to have `data-id` set to the request id.
    */
@@ -377,6 +344,23 @@ declare interface RequestsListMixin {
    * The target has to have `data-id` set to the request id.
    */
   [itemClickHandler](e: PointerEvent): void;
+
+  /**
+   * Dispatches the `select` event when selection change.
+   */
+  [notifySelection](): void;
+
+  /**
+   * Handler for the `dragstart` event added to the list item when `draggableEnabled`
+   * is set to true. This function sets request data on the `dataTransfer` 
+   * with the following properties:
+   * - `arc/id` with value of the id of the dragged request
+   * - `arc/type` with value of the current type
+   * - `arc/request` which indicates the dragged property is a request 
+   * - `arc/source` with the name of the element
+   * Additionally the function sets default `effectAllowed` to copy.
+   */
+  [dragStartHandler](e: DragEvent): void;
 
   /**
    * This method to be implemented by the element to render the list of items.
@@ -401,4 +385,14 @@ declare interface RequestsListMixin {
    * @returns Template for a request's http label
    */
   [requestItemLabelTemplate](method: string): TemplateResult|string;
+
+  /**
+   * @returns A template with the drop request message
+   */
+  [dropTargetTemplate](): TemplateResult;
+
+  /**
+   * @returns A template for when data are unavailable.
+   */
+  [unavailableTemplate](): TemplateResult|string;
 }

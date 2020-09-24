@@ -8,18 +8,112 @@ This module replaces:
 - [x] requests-list-mixin
 - [x] saved-list-mixin
 - [x] projects-list-consumer-mixin
-- history-panel
-- saved-requests-panel
+- [x] history-panel
+- [x] saved-requests-panel
 
-Work in progress.
+[![Published on NPM](https://img.shields.io/npm/v/@advanced-rest-client/requests-list.svg)](https://www.npmjs.com/package/@advanced-rest-client/requests-list)
 
-TODO:
+[![Build Status](https://travis-ci.com/advanced-rest-client/requests-list.svg)](https://travis-ci.com/advanced-rest-client/requests-list)
 
-- create a component that combines all logic and ui r4elated to handling saved requests (arc-saved-request)
-  - saved-request-detail
-  - saved-request-editor
-- redesign search experience to provide a single point of searching for:
-  - history
-  - saved
-  - projects
-  - API projects
+## Usage
+
+### Installation
+
+```sh
+npm install --save @advanced-rest-client/requests-list
+```
+
+### History panel
+
+```javascript
+import '@advanced-rest-client/requests-list/history-panel.js';
+
+
+html`
+<history-panel 
+  draggableEnabled
+  @details="${this.historyItemDetailsHandler}"
+></history-panel>`;
+```
+
+### Saved panel
+
+```javascript
+import '@advanced-rest-client/requests-list/saved-panel.js';
+
+
+html`
+<saved-panel 
+  draggableEnabled
+  @details="${this.savedItemDetailsHandler}"
+></saved-panel>`;
+```
+
+### SavedListMixin
+
+A mixin to create an element that renders list of saved items.
+
+```javascript
+import { LitElement, html } from 'lit-element';
+import { SavedListMixin, listTemplate, ListStyles } from '@advanced-rest-client/requests-list';
+
+class ArcSavedMenuElement extends SavedListMixin(LitElement) {
+  static get styles() {
+    return ListStyles;
+  }
+
+  render() {
+    const { requests } = this;
+    if (!requests || !requests.length) {
+      return html`<p>No requests on the list</p>`;
+    }
+    return this[listTemplate]();
+  }
+}
+
+window.customElements.define('saved-menu', ArcSavedMenuElement);
+```
+
+### HistoryListMixin
+
+A mixin to create an element that renders list of history items.
+
+```javascript
+import { LitElement, html } from 'lit-element';
+import { HistoryListMixin, listTemplate, ListStyles } from '@advanced-rest-client/requests-list';
+
+class ArcHistoryMenuElement extends HistoryListMixin(LitElement) {
+  static get styles() {
+    return ListStyles;
+  }
+
+  render() {
+    const { requests } = this;
+    if (!requests || !requests.length) {
+      return html`<p>No requests on the list</p>`;
+    }
+    return this[listTemplate]();
+  }
+}
+
+window.customElements.define('history-menu', ArcHistoryMenuElement);
+```
+
+## Development
+
+```sh
+git clone https://github.com/@advanced-rest-client/requests-list
+cd requests-list
+npm install
+```
+
+### Running the demo locally
+
+```sh
+npm start
+```
+
+### Running the tests
+```sh
+npm test
+```

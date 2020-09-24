@@ -18,7 +18,7 @@ import { LitElement, html } from 'lit-element';
 import {classMap} from 'lit-html/directives/class-map.js';
 import {ifDefined} from 'lit-html/directives/if-defined.js';
 import { ArcModelEventTypes, ArcModelEvents } from '@advanced-rest-client/arc-models';
-import { DataImportEventTypes, ArcNavigationEvents, ExportEvents } from '@advanced-rest-client/arc-events';
+import { DataImportEventTypes, ArcNavigationEvents } from '@advanced-rest-client/arc-events';
 import '@advanced-rest-client/arc-icons/arc-icon.js';
 import '@anypoint-web-components/anypoint-button/anypoint-icon-button.js';
 import '@api-components/http-method-label/http-method-label.js';
@@ -42,15 +42,12 @@ import {
   dataImportHandler,
   dataDestroyHandler,
   readType,
-  updateBulk,
-  updateRequest,
   updateListStyles,
   applyListStyles,
   persistRequestsOrder,
   projectRequestChanged,
   requestChanged,
   updateProjectOrder,
-  dispatchExportData,
   openRequest,
   readProjectRequests,
   queryingValue,
@@ -71,6 +68,9 @@ import {
   requestItemLabelTemplate,
   itemClickHandler,
   notifySelection,
+  dragStartHandler,
+  dropTargetTemplate,
+  unavailableTemplate,
 } from './internals.js';
 
 /** @typedef {import('@advanced-rest-client/arc-models').ARCRequestDeletedEvent} ARCRequestDeletedEvent */
@@ -229,7 +229,7 @@ const mxFunction = base => {
     }
   
     set [queryingProperty](value) {
-      const old = this[queryingProperty];
+      const old = this[queryingValue];
       /* istanbul ignore if */
       if (old === value) {
         return;
@@ -596,28 +596,6 @@ const mxFunction = base => {
       }
       return 'saved';
     }
-    
-    /**
-     * Updates requests in a bulk operation.
-     * 
-     * @param {(ARCSavedRequest|ARCHistoryRequest)[]} items Request items to save
-     * @return {Promise<ARCEntityChangeRecord[]>}
-     */
-    async [updateBulk](items) {
-      const type = this[readType]();
-      return ArcModelEvents.Request.updateBulk(this, type, items);
-    }
-
-    /**
-     * Dispatches request update event.
-     * 
-     * @param {ARCSavedRequest|ARCHistoryRequest} request The request to update.
-     * @return {Promise<ARCEntityChangeRecord>} Promise resolved when the request object is updated.
-     */
-    async [updateRequest](request) {
-      const type = this[readType]();
-      return ArcModelEvents.Request.update(this, type, request);
-    }
 
     /**
      * Updates icon size CSS variable and notifies resize on the list when
@@ -736,33 +714,6 @@ const mxFunction = base => {
         this.requests = newOrder;
       }
       return changed;
-    }
-
-    /**
-     * Dispatches export event
-     * 
-     * @param {(ARCSavedRequest|ARCHistoryRequest)[]} requests List of request to export.
-     * @param {ExportOptions} exportOptions Export configuration options
-     * @param {ProviderOptions} providerOptions Provider configuration options.
-     * @return {Promise<ArcExportResult>} A promise resolved to the provider's return value.
-     */
-    async [dispatchExportData](requests, exportOptions, providerOptions) {
-      validateRequestType(this.type);
-      const data = {};
-      switch (this.type) {
-        case 'history':
-          data.history = requests;
-          break;
-        case 'project':
-          data.saved = requests;
-          data.projects = [this.project];
-          break;
-        case 'saved':
-          data.saved = requests;
-          break;
-        default:
-      }
-      return ExportEvents.nativeData(this, data, exportOptions, providerOptions);
     }
 
     /**
@@ -889,8 +840,40 @@ const mxFunction = base => {
       this[notifySelection]();
     }
 
+    /**
+     * Dispatches the `select` event when selection change.
+     */
     [notifySelection]() {
       this.dispatchEvent(new CustomEvent('select'));
+    }
+
+    /**
+     * Handler for the `dragstart` event added to the list item when `draggableEnabled`
+     * is set to true. This function sets request data on the `dataTransfer` 
+     * with the following properties:
+     * - `arc/id` with value of the id of the dragged request
+     * - `arc/type` with value of the current type
+     * - `arc/request` which indicates the dragged property is a request 
+     * - `arc/source` with the name of the element
+     * Additionally the function sets default `effectAllowed` to copy.
+     * 
+     * @param {DragEvent} e
+     */
+    [dragStartHandler](e) {
+      if (!this.draggableEnabled) {
+        return;
+      }
+      const node = /** @type HTMLElement */ (e.target);
+      const { id } = node.dataset;
+      if (!id) {
+        return;
+      }
+      const dt = e.dataTransfer;
+      dt.setData('arc/id', id);
+      dt.setData('arc/type', this.type);
+      dt.setData('arc/request', '1');
+      dt.setData('arc/source', this.localName);
+      dt.effectAllowed = 'copy';
     }
 
     /**
@@ -960,6 +943,25 @@ const mxFunction = base => {
         'with-margin': selectable
       };
       return html`<http-method-label method="${method}" slot="${ifDefined(slot)}" class=${classMap(classes)}></http-method-label>`;
+    }
+
+    /**
+     * @returns {TemplateResult} A template with the drop request message
+     */
+    [dropTargetTemplate]() {
+      return html`
+      <div class="drop-message">
+        <arc-icon class="drop-icon" icon="saveAlt"></arc-icon>
+        <p>Drop the request here</p>
+      </div>
+      `;
+    }
+
+    /**
+     * @returns {TemplateResult|string} A template for when data are unavailable.
+     */
+    [unavailableTemplate]() {
+      return html``;
     }
   }
   return RequestsListMixinImpl;

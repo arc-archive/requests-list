@@ -140,3 +140,21 @@ export function midnightTimestamp() {
   now.setHours(0, 0, 0, 0);
   return now.getTime();
 }
+
+/**
+ * Computes a proper key command depending on the platform.
+ *
+ * @param {string} key The key modifier for the command
+ * @return {string} Keyboard command for the key.
+ */
+export function computeA11yCommand(key) {
+  const isMac = navigator.platform.indexOf('Mac') !== -1;
+  let cmd = '';
+  if (isMac) {
+    cmd += 'meta+';
+  } else {
+    cmd += 'ctrl+';
+  }
+  cmd += key;
+  return cmd;
+}

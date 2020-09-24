@@ -11,6 +11,7 @@ import '@anypoint-web-components/anypoint-radio-button/anypoint-radio-button.js'
 import '@anypoint-web-components/anypoint-radio-button/anypoint-radio-group.js';
 import '@advanced-rest-client/arc-ie/arc-data-export.js';
 import { ImportEvents, DataExportEventTypes, GoogleDriveEventTypes } from '@advanced-rest-client/arc-events';
+import { ArcModelEvents } from '@advanced-rest-client/arc-models'
 import '../history-panel.js';
 
 class ComponentPage extends DemoPage {
@@ -19,6 +20,7 @@ class ComponentPage extends DemoPage {
     this.initObservableProperties([
       'listActions', 'selectable', 'listType',
       'exportSheetOpened', 'exportFile', 'exportData',
+      'draggableEnabled', 'dropValue',
     ]);
     this.componentName = 'History panel';
     this.generator = new DataGenerator();
@@ -27,8 +29,10 @@ class ComponentPage extends DemoPage {
     this.selectable = false;
     this.listType = 'default';
     this.exportSheetOpened = false;
+    this.draggableEnabled = false;
     this.exportFile = undefined;
     this.exportData = undefined;
+    this.dropValue = undefined;
 
     this.generateRequests = this.generateRequests.bind(this);
     this.listItemDetailHandler = this.listItemDetailHandler.bind(this);
@@ -36,6 +40,10 @@ class ComponentPage extends DemoPage {
     this.listTypeHandler = this.listTypeHandler.bind(this);
     this.selectHandler = this.selectHandler.bind(this);
     this.exportOpenedChanged = this.exportOpenedChanged.bind(this);
+    this.dragoverHandler = this.dragoverHandler.bind(this);
+    this.dragleaveHandler = this.dragleaveHandler.bind(this);
+    this.dragEnterHandler = this.dragEnterHandler.bind(this);
+    this.dropHandler = this.dropHandler.bind(this);
 
     window.addEventListener(DataExportEventTypes.fileSave, this.fileExportHandler.bind(this));
     window.addEventListener(GoogleDriveEventTypes.save, this.fileExportHandler.bind(this));
@@ -86,6 +94,47 @@ class ComponentPage extends DemoPage {
     this.exportSheetOpened = e.detail.value;
   }
 
+  dragoverHandler(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+    e.currentTarget.classList.add('drag-over');
+  }
+
+  dragleaveHandler(e) {
+    e.currentTarget.classList.remove('drag-over');
+  }
+
+  dragEnterHandler(e) {
+    e.currentTarget.classList.add('drag-over');
+  }
+
+  /**
+   * @param {DragEvent} e
+   */
+  async dropHandler(e) {
+    e.preventDefault();
+    if (!e.dataTransfer.getData('arc/request')) {
+      return;
+    }
+    const props = {};
+    Array.from(e.dataTransfer.items).forEach((item) => {
+      props[item.type] = e.dataTransfer.getData(item.type);
+    });
+
+    /** @type HTMLElement */ (e.currentTarget).classList.remove('drag-over');
+    const id = e.dataTransfer.getData('arc/id');
+    const type = e.dataTransfer.getData('arc/type');
+    const request = await ArcModelEvents.Request.read(document.body, type, id);
+    
+    this.dropValue = `Event data: 
+${JSON.stringify(props, null, 2)}
+
+Read request: 
+${JSON.stringify(request, null, 2)}
+`;
+    console.log(request);
+  }
+
   _demoTemplate() {
     const {
       demoStates,
@@ -97,6 +146,7 @@ class ComponentPage extends DemoPage {
       exportSheetOpened,
       exportData,
       exportFile,
+      draggableEnabled,
     } = this;
     return html`
     <section class="documentation-section">
@@ -115,6 +165,7 @@ class ComponentPage extends DemoPage {
           ?selectable="${selectable}"
           ?compatibility="${compatibility}"
           .listType="${listType}"
+          ?draggableEnabled="${draggableEnabled}"
           @details="${this.listItemDetailHandler}"
           @arcnavigaterequest="${this.navigateItemDetailHandler}"
           @select="${this.selectHandler}"
@@ -133,6 +184,12 @@ class ComponentPage extends DemoPage {
           name="selectable"
           @change="${this._toggleMainOption}"
         >Add selection</anypoint-checkbox>
+        <anypoint-checkbox
+          aria-describedby="mainOptionsLabel"
+          slot="options"
+          name="draggableEnabled"
+          @change="${this._toggleMainOption}"
+        >Draggable</anypoint-checkbox>
 
         <label slot="options" id="listTypeLabel">List type</label>
         <anypoint-radio-group
@@ -158,6 +215,7 @@ class ComponentPage extends DemoPage {
           >
         </anypoint-radio-group>
       </arc-interactive-demo>
+      ${this._dropTargetTemplate()}
     </section>
 
     <bottom-sheet
@@ -170,6 +228,24 @@ class ComponentPage extends DemoPage {
       <pre>${exportData}</pre>
     </bottom-sheet>
     `;
+  }
+
+  _dropTargetTemplate() {
+    if (!this.draggableEnabled) {
+      return '';
+    }
+    const { dropValue } = this;
+    return html`
+    <section
+      class="drop-target"
+      @dragover="${this.dragoverHandler}"
+      @dragleave="${this.dragleaveHandler}"
+      @dragenter="${this.dragEnterHandler}"
+      @drop="${this.dropHandler}"
+    >
+      Drop request here
+      ${dropValue ? html`<output>${dropValue}</output>` : ''}
+    </section>`;
   }
 
   _controlsTemplate() {

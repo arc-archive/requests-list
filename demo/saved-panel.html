@@ -17,6 +17,17 @@
   }
   */
 
+  .panels-container {
+    flex: 1;
+    display: flex;
+  }
+
+  .history-menu {
+    width: 320px;
+    height: 700px;
+    overflow: auto;
+  }
+
   saved-panel {
     height: 700px;
     flex: 1;
@@ -24,6 +35,24 @@
 
   pre {
     display: block;
+    white-space: pre-wrap;
+  }
+
+  .drop-target {
+    border: 2px transparent dashed;
+    box-sizing: border-box;
+    text-align: center;
+    padding: 20px;
+    border: 1px #e5e5e5 solid;
+  }
+
+  .drop-target.drag-over {
+    border-color: #8BC34A;
+  }
+
+  output {
+    display: block;
+    text-align: left;
     white-space: pre-wrap;
   }
   </style>

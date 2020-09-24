@@ -4,15 +4,12 @@ export const requestDeletedHandler = Symbol('requestDeletedHandler');
 export const requestChangedHandler = Symbol('requestChangedHandler');
 export const projectChangeHandler = Symbol('projectChangeHandler');
 export const readType = Symbol('readType');
-export const updateBulk = Symbol('updateBulk');
-export const updateRequest = Symbol('updateRequest');
 export const updateListStyles = Symbol('updateListStyles');
 export const applyListStyles = Symbol('applyListStyles');
 export const persistRequestsOrder = Symbol('persistRequestsOrder');
 export const projectRequestChanged = Symbol('projectRequestChanged');
 export const requestChanged = Symbol('requestChanged');
 export const updateProjectOrder = Symbol('updateProjectOrder');
-export const dispatchExportData = Symbol('dispatchExportData');
 export const openRequest = Symbol('openRequest');
 export const readProjectRequests = Symbol('readProjectRequests');
 
@@ -55,10 +52,12 @@ export const projectDeleteHandler = Symbol('projectDeleteHandler');
 export const notifyProject = Symbol('notifyProject');
 export const computeProjectsAutocomplete = Symbol('computeProjectsAutocomplete');
 export const computeProjectSelection = Symbol('computeProjectSelection');
+export const makingProjectsQueryValue = Symbol('makingProjectsQueryValue');
 
 export const busyTemplate = Symbol('busyTemplate');
 export const unavailableTemplate = Symbol('unavailableTemplate');
 export const contentActionsTemplate = Symbol('contentActionsTemplate');
+export const customActionsTemplate = Symbol('customActionsTemplate');
 export const contentActionHandler = Symbol('contentActionHandler');
 export const searchIconTemplate = Symbol('searchIconTemplate');
 export const searchInputTemplate = Symbol('searchInputTemplate');
@@ -87,26 +86,16 @@ export const exportOverlayClosed = Symbol('exportOverlayClosed');
 export const exportCancel = Symbol('exportCancel');
 export const exportAccept = Symbol('exportAccept');
 export const driveExportedTemplate = Symbol('driveExportedTemplate');
+export const projectSelectorTemplate = Symbol('projectSelectorTemplate');
 
-/* 
-
-export declare const listTypeValue: unique symbol;
-export declare const hasTwoLinesValue: unique symbol;
-export declare const requestDeletedHandler: unique symbol;
-export declare const requestChangedHandler: unique symbol;
-export declare const projectChangeHandler: unique symbol;
-export declare const readType: unique symbol;
-export declare const updateBulk: unique symbol;
-export declare const updateRequest: unique symbol;
-export declare const computeHasTwoLines: unique symbol;
-export declare const updateListStyles: unique symbol;
-export declare const applyListStyles: unique symbol;
-export declare const persistRequestsOrder: unique symbol;
-export declare const projectRequestChanged: unique symbol;
-export declare const requestChanged: unique symbol;
-export declare const updateProjectOrder: unique symbol;
-export declare const dispatchExportData: unique symbol;
-export declare const openRequest: unique symbol;
-export declare const readProjectRequests: unique symbol;
-
-*/
+export const draggableEnabledValue = Symbol('draggableEnabledValue');
+export const draggableChanged = Symbol('draggableChanged');
+export const addDraggableEvents = Symbol('addDraggableEvents');
+export const removeDraggableEvents = Symbol('addDraggableEvents');
+export const dragStartHandler = Symbol('dragStartHandler');
+export const dragOverHandler = Symbol('dragOverHandler');
+export const dragLeaveHandler = Symbol('dragLeaveHandler');
+export const dropHandler = Symbol('dropHandler');
+export const hasDraggableEventsValue = Symbol('hasDraggableEventsValue');
+export const isValidDragTarget = Symbol('isValidDragTarget');
+export const dropTargetTemplate = Symbol('dropTargetTemplate');

@@ -36,6 +36,8 @@ import {
   selectedItemsValue,
   itemClickHandler,
   requestDeletedHandler,
+  dragStartHandler,
+  unavailableTemplate,
 } from './internals.js';
 import { midnightTimestamp } from './Utils.js';
 import { RequestsListMixin } from './RequestsListMixin.js';
@@ -278,6 +280,19 @@ const mxFunction = base => {
     }
 
     /**
+     * Overrides the RequestListMixin's drag start function to add `arc/history` property
+     * @param {DragEvent} e
+     */
+    [dragStartHandler](e) {
+      if (!this.draggableEnabled) {
+        return;
+      }
+      super[dragStartHandler](e);
+      const dt = e.dataTransfer;
+      dt.setData('arc/history', '1');
+    }
+
+    /**
      * @returns {TemplateResult|string} Template for the list items.
      */
     [listTemplate]() {
@@ -326,7 +341,7 @@ const mxFunction = base => {
      * @returns {TemplateResult} Template for a single request object
      */
     [requestItemTemplate](item, groupIndex, requestIndex) {
-      const { compatibility } = this;
+      const { compatibility, draggableEnabled } = this;
       const request = item.item;
       const allSelected = /** @type string[] */ (this[selectedItemsValue] || []);
       const selected = allSelected.includes(request._id);
@@ -344,6 +359,8 @@ const mxFunction = base => {
         role="menuitem"
         ?compatibility="${compatibility}"
         @click="${this[itemClickHandler]}"
+        draggable="${draggableEnabled ? 'true' : 'false'}"
+        @dragstart="${this[dragStartHandler]}"
       >
         ${this[requestItemSelectionTemplate](request._id)}
         ${this[requestItemLabelTemplate](request.method)}
@@ -370,6 +387,19 @@ const mxFunction = base => {
           at <local-time datetime="${item.isoTime}" hour="2-digit" minute="2-digit" second="2-digit"></local-time>
         </div>
       </anypoint-item-body>
+      `;
+    }
+
+    [unavailableTemplate]() {
+      const { dataUnavailable } = this;
+      if (!dataUnavailable) {
+        return '';
+      }
+      return html`
+      <div class="list-empty">
+        <p class="empty-info"><b>The requests list is empty.</b></p>
+        <p class="empty-info">Send a request from the request panel and it will appear here.</p>
+      </div>
       `;
     }
   }

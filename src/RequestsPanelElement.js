@@ -1,6 +1,7 @@
 import { LitElement, html } from 'lit-element';
 import '@advanced-rest-client/arc-icons/arc-icon.js';
 import '@anypoint-web-components/anypoint-input/anypoint-input.js';
+import '@anypoint-web-components/anypoint-button/anypoint-icon-button.js';
 import '@material/mwc-snackbar';
 import '@advanced-rest-client/bottom-sheet/bottom-sheet.js';
 import '@advanced-rest-client/arc-ie/export-options.js';
@@ -14,6 +15,7 @@ import {
   unavailableTemplate,
   listTemplate,
   contentActionsTemplate,
+  customActionsTemplate,
   contentActionHandler,
   searchIconTemplate,
   searchInputTemplate,
@@ -44,11 +46,13 @@ import {
   exportCancel,
   exportAccept,
   driveExportedTemplate,
+  dropTargetTemplate,
 } from './internals.js';
 
 /** @typedef {import('@advanced-rest-client/arc-ie').ExportOptionsElement} ExportOptionsElement */
 /** @typedef {import('@advanced-rest-client/arc-types').DataExport.ProviderOptions} ProviderOptions */
 /** @typedef {import('@advanced-rest-client/arc-types').DataExport.ExportOptions} ExportOptions */
+/** @typedef {import('lit-element').TemplateResult} TemplateResult */
 
 export class RequestsPanelElement extends RequestsListMixin(LitElement) {
   static get styles() {
@@ -74,8 +78,13 @@ export class RequestsPanelElement extends RequestsListMixin(LitElement) {
     this.requestUpdate();
   }
 
+  /**
+   * A handler for the content action click. Calls a function depending on the click icon.
+   * @param {PointerEvent} e
+   */
   [contentActionHandler](e) {
-    const { action } = e.currentTarget.dataset;
+    const node = /** @type HTMLElement */(e.currentTarget);
+    const { action } = node.dataset;
     switch (action) {
       case 'search': this.isSearch = true; break;
       case 'refresh': this.refresh(); break;
@@ -134,7 +143,7 @@ export class RequestsPanelElement extends RequestsListMixin(LitElement) {
     this.requestUpdate();
   }
 
-  async [deleteConfirm]() {
+  [deleteConfirm]() {
     ArcModelEvents.destroy(this, [this.type]);
     this[deleteCancel]();
     if (this[selectedItemsValue]) {
@@ -219,6 +228,7 @@ export class RequestsPanelElement extends RequestsListMixin(LitElement) {
 
   render() {
     return html`
+    ${this[dropTargetTemplate]()}
     ${this[busyTemplate]()}
     ${this[contentActionsTemplate]()}
     ${this[unavailableTemplate]()}
@@ -233,6 +243,9 @@ export class RequestsPanelElement extends RequestsListMixin(LitElement) {
     `;
   }
 
+  /**
+   * @returns {TemplateResult|string} A template for the loader element
+   */
   [busyTemplate]() {
     if (!this.querying) {
       return '';
@@ -240,19 +253,9 @@ export class RequestsPanelElement extends RequestsListMixin(LitElement) {
     return html`<progress></progress>`;
   }
 
-  [unavailableTemplate]() {
-    const { dataUnavailable } = this;
-    if (!dataUnavailable) {
-      return '';
-    }
-    return html`
-    <div class="list-empty">
-      <p class="empty-info"><b>The requests list is empty.</b></p>
-      <p class="empty-info">Send a request from the request panel and it will appear here.</p>
-    </div>
-    `;
-  }
-
+  /**
+   * @returns {TemplateResult|string} A template for the list actions
+   */
   [contentActionsTemplate]() {
     const { dataUnavailable } = this;
     if (dataUnavailable) {
@@ -278,10 +281,21 @@ export class RequestsPanelElement extends RequestsListMixin(LitElement) {
       </anypoint-icon-button>
       <div class="selection-divider"></div>
       ${isSearch ? this[searchInputTemplate]() : this[searchIconTemplate]()}
+      ${this[customActionsTemplate]()}
     </div>
     `;
   }
 
+  /**
+   * @returns {TemplateResult} A template for any additional actions to be rendered in the UI.
+   */
+  [customActionsTemplate]() {
+    return html``;
+  }
+
+  /**
+   * @returns {TemplateResult} A template for the search trigger action button
+   */
   [searchIconTemplate]() {
     return html`
     <anypoint-icon-button @click="${this[contentActionHandler]}" data-action="search" title="Search the requests">
@@ -289,6 +303,9 @@ export class RequestsPanelElement extends RequestsListMixin(LitElement) {
     </anypoint-icon-button>`;
   }
 
+  /**
+   * @returns {TemplateResult} A template for the search input element
+   */
   [searchInputTemplate]() {
     return html`
     <anypoint-input 
@@ -302,6 +319,9 @@ export class RequestsPanelElement extends RequestsListMixin(LitElement) {
     `;
   }
 
+  /**
+   * @returns {TemplateResult|string} A template for the empty search result
+   */
   [searchEmptyTemplate]() {
     if (!this.isSearch || !this.searchListEmpty) {
       return '';
@@ -313,6 +333,9 @@ export class RequestsPanelElement extends RequestsListMixin(LitElement) {
     `;
   }
 
+  /**
+   * @returns {TemplateResult|string} A template for the delete all data dialog
+   */
   [confirmDeleteAllTemplate]() {
     if (!this[deleteAllDialogValue]) {
       return '';
@@ -334,6 +357,9 @@ export class RequestsPanelElement extends RequestsListMixin(LitElement) {
     `;
   }
 
+  /**
+   * @returns {TemplateResult|string} A template for the undo delete data toast
+   */
   [deleteUndoTemplate]() {
     const opened = this[deleteUndoOpened];
     const cnt = (this[deleteLatestList] || []).length || 0;
@@ -361,6 +387,9 @@ export class RequestsPanelElement extends RequestsListMixin(LitElement) {
     `;
   }
 
+  /**
+   * @returns {TemplateResult|string} A template for the export options panel in the bottom-sheet element
+   */
   [exportOptionsTemplate]() {
     const opened = this[exportOptionsOpened];
     const {
@@ -383,6 +412,9 @@ export class RequestsPanelElement extends RequestsListMixin(LitElement) {
     </bottom-sheet>`;
   }
 
+  /**
+   * @returns {TemplateResult|string} A template for the Google Drive export confirmation dialog.
+   */
   [driveExportedTemplate]() {
     return html`
     <mwc-snackbar id="driveExport" labelText="Data saved on Google Drive."></mwc-snackbar>

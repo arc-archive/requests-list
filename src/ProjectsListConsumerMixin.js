@@ -20,7 +20,7 @@ import { DataImportEventTypes } from '@advanced-rest-client/arc-events';
 import { 
   hasProjectsValue,
   projectsValue,
-  makingQueryValue,
+  makingProjectsQueryValue,
   refreshProjectsList,
   handleError,
   setProjects,
@@ -106,12 +106,12 @@ const mxFunction = base => {
      * Refreshes the list of projects after next render frame.
      */
     refreshProjects() {
-      if (this[makingQueryValue]) {
+      if (this[makingProjectsQueryValue]) {
         return;
       }
-      this[makingQueryValue] = true;
+      this[makingProjectsQueryValue] = true;
       setTimeout(() => {
-        this[makingQueryValue] = false;
+        this[makingProjectsQueryValue] = false;
         this[refreshProjectsList]();
       });
     }
@@ -121,14 +121,14 @@ const mxFunction = base => {
      * @return {Promise<void>}
      */
     async [refreshProjectsList]() {
-      this[makingQueryValue] = true;
+      this[makingProjectsQueryValue] = true;
       try {
         const result = await ArcModelEvents.Project.listAll(this);
         this[setProjects](result);
       } catch (cause) {
         this[handleError](cause)
       }
-      this[makingQueryValue] = true;
+      this[makingProjectsQueryValue] = true;
     }
 
     /**

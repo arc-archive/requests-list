@@ -113,4 +113,32 @@ http-method-label.with-margin {
 anypoint-button {
   box-shadow: none;
 }
+
+.drop-message {
+  display: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(255, 255, 255, 0.84);
+  z-index: 10;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary-color);
+  border: 2px var(--primary-color) dashed;
+  font-size: 18px;
+}
+
+.drop-icon {
+  width: 72px;
+  height: 72px;
+  display: inline-block;
+  fill: currentColor;
+}
+
+:host(.drop-target) .drop-message {
+  display: flex;
+  flex-direction: column;
+}
 `;

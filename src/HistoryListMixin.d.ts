@@ -1,7 +1,7 @@
 import { TemplateResult } from 'lit-element';
-import {
-  ARCHistoryRequest,
-} from '@advanced-rest-client/arc-models';
+import { ARCHistoryRequest, ARCRequestDeletedEvent } from '@advanced-rest-client/arc-models';
+import { HistoryGroup, HistoryListItem, HistoryDayItem } from './types';
+import { RequestsListMixinConstructor, RequestsListMixin } from './RequestsListMixin';
 import {
   appendItems,
   createHistoryGroup,
@@ -11,10 +11,16 @@ import {
   findGroupInsertPosition,
   findHistoryInsertPosition,
   requestChanged,
+  listTemplate,
   historyGroupHeaderTemplate,
+  toggleHistoryGroupHandler,
+  requestItemTemplate,
+  requestItemBodyTemplate,
+  requestDeletedHandler,
+  dragStartHandler,
+  unavailableTemplate,
 } from './internals';
-import { HistoryGroup } from './types';
-import { RequestsListMixinConstructor, RequestsListMixin } from './RequestsListMixin';
+
 
 declare function HistoryListMixin<T extends new (...args: any[]) => {}>(base: T): T & HistoryListMixinConstructor & RequestsListMixinConstructor;
 
@@ -81,8 +87,44 @@ declare interface HistoryListMixin extends RequestsListMixin {
   [requestChanged](request: ARCHistoryRequest): void;
 
   /**
+   * Overrides the delete request handler to remove the appropriate request.
+   */
+  [requestDeletedHandler](e: ARCRequestDeletedEvent): void;
+
+  /**
+   * @param e Toggle visibility of the history group
+   */
+  [toggleHistoryGroupHandler](e: PointerEvent): void;
+
+  /**
+   * Overrides the RequestListMixin's drag start function to add `arc/history` property
+   */
+  [dragStartHandler](e: DragEvent): void;
+
+  /**
+   * @returns Template for the list items.
+   */
+  [listTemplate](): TemplateResult|string;
+
+  /**
    * @param group A group to render
    * @returns Template for the history group item.
    */
   [historyGroupHeaderTemplate](group: HistoryGroup): TemplateResult;
+
+  /**
+   * @param item The request to render
+   * @param groupIndex Index of the history group
+   * @param requestIndex Index of the request in the group
+   * @returns Template for a single request object
+   */
+  [requestItemTemplate](item: HistoryListItem, groupIndex: number, requestIndex: number): TemplateResult;
+
+  /**
+   * @param {HistoryListItem} item The request to render
+   * @returns {TemplateResult} Template for a request's content
+   */
+  [requestItemBodyTemplate](item: HistoryListItem): TemplateResult
+
+  [unavailableTemplate](): TemplateResult|string;
 }

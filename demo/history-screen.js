@@ -1,7 +1,7 @@
 import { LitElement, html } from 'lit-element';
 import {
   HistoryListMixin,
-  listTemplate,
+  internals,
   ListStyles
 } from '../index.js';
 
@@ -15,7 +15,7 @@ export class HistoryScreenElement extends HistoryListMixin(LitElement) {
     if (!requests || !requests.length) {
       return html`<p>No requests on the list</p>`;
     }
-    return this[listTemplate]();
+    return this[internals.listTemplate]();
   }
 }
 

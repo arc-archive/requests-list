@@ -87,6 +87,7 @@ export const exportCancel = Symbol('exportCancel');
 export const exportAccept = Symbol('exportAccept');
 export const driveExportedTemplate = Symbol('driveExportedTemplate');
 export const projectSelectorTemplate = Symbol('projectSelectorTemplate');
+export const exportKindValue = Symbol('exportKindValue');
 
 export const draggableEnabledValue = Symbol('draggableEnabledValue');
 export const draggableChanged = Symbol('draggableChanged');

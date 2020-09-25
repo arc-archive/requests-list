@@ -87,6 +87,7 @@ export declare const exportCancel: unique symbol;
 export declare const exportAccept: unique symbol;
 export declare const driveExportedTemplate: unique symbol;
 export declare const projectSelectorTemplate: unique symbol;
+export declare const exportKindValue: unique symbol;
 
 export declare const draggableEnabledValue: unique symbol;
 export declare const draggableChanged: unique symbol;

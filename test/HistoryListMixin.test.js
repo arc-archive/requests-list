@@ -8,7 +8,7 @@ import { internals } from '../index.js';
 /** @typedef {import('@advanced-rest-client/arc-models').ARCHistoryRequest} ARCHistoryRequest */
 /** @typedef {import('@advanced-rest-client/arc-models').ARCSavedRequest} ARCSavedRequest */
 
-describe('HistoryListMixinImpl', () => {
+describe('HistoryListMixin', () => {
   const generator = new DataGenerator();
 
   /**
@@ -46,6 +46,13 @@ describe('HistoryListMixinImpl', () => {
     await nextFrame();
     return element;
   }
+
+  describe('constructor()', () => {
+    it('sets [exportKindValue]', async () => {
+      const element = await noAutoFixture();
+      assert.equal(element[internals.exportKindValue], 'ARC#HistoryExport');
+    });
+  });
 
   describe('connectedCallback()', () => {
     it('sets type property', async () => {

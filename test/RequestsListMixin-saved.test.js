@@ -1,8 +1,9 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-param-reassign */
-import { fixture, assert, html, nextFrame } from '@open-wc/testing';
+import { fixture, assert, html, nextFrame, oneEvent } from '@open-wc/testing';
 import { DataGenerator } from '@advanced-rest-client/arc-data-generator';
-import { ArcModelEvents } from '@advanced-rest-client/arc-models';
+import { ArcModelEvents, ArcModelEventTypes } from '@advanced-rest-client/arc-models';
+import { ArcNavigationEventTypes } from '@advanced-rest-client/arc-events';
 import '@advanced-rest-client/arc-models/project-model.js';
 import '@advanced-rest-client/arc-models/request-model.js';
 import sinon from 'sinon';
@@ -12,9 +13,23 @@ import { internals } from '../index.js';
 /** @typedef {import('../').SavedPanelElement} SavedPanelElement */
 /** @typedef {import('@advanced-rest-client/arc-models').ARCHistoryRequest} ARCHistoryRequest */
 /** @typedef {import('@advanced-rest-client/arc-models').ARCSavedRequest} ARCSavedRequest */
+/** @typedef {import('lit-html').TemplateResult} TemplateResult */
 
 describe('RequestsListMixin (saved)', () => {
   const generator = new DataGenerator();
+
+  /**
+   * @returns {TemplateResult}
+   */
+  function modelTemplate() {
+    return html`
+    <div>
+      <project-model></project-model>
+      <request-model></request-model>
+      <saved-panel></saved-panel>
+    </div>
+    `;
+  }
 
   /**
    * @returns {Promise<SavedPanelElement>}
@@ -30,15 +45,170 @@ describe('RequestsListMixin (saved)', () => {
     return /** @type SavedPanelElement */ el.querySelector('saved-panel');
   }
 
+  /**
+   * @returns {Promise<SavedPanelElement>}
+   */
+  async function afterQueryFixture() {
+    const el = await fixture(modelTemplate());
+    const element = /** @type SavedPanelElement */ el.querySelector('saved-panel');
+    // the query could potentially start already
+    if (!element.querying) {
+      await oneEvent(element, 'queryingchange');
+    }
+    await oneEvent(element, 'queryingchange');
+    return element;
+  }
+
+  /**
+   * @returns {Promise<SavedPanelElement>}
+   */
+  async function queryLimitFixture() {
+    const element = await noAutoFixture();
+    element.pageLimit = 10;
+    return element;
+  }
+
+  /**
+   * @returns {Promise<SavedPanelElement>}
+   */
+  async function afterProjectQueryFixture() {
+    const el = await fixture(modelTemplate());
+    const element = /** @type SavedPanelElement */ el.querySelector('saved-panel');
+    await oneEvent(element, 'projectschange');
+    return element;
+  }
+
   function projectDb() {
     return new PouchDB('legacy-projects');
   }
 
-  describe('[projectChangeHandler]()', () => {
+  describe('#hasRequests', () => {
     let element = /** @type SavedPanelElement */(null);
     beforeEach(async () => {
       element = await noAutoFixture();
-      element.project = generator.createProjectObject();
+    });
+
+    it('returns false when no requests', () => {
+      assert.isFalse(element.hasRequests);
+    });
+
+    it('returns true when has requests', () => {
+      element.requests = /** @type ARCSavedRequest[] */ (generator.generateHistoryRequestsData({
+        requestsSize: 2
+      }));
+      assert.isTrue(element.hasRequests);
+    });
+  });
+
+  describe('#listType', () => {
+    let element = /** @type SavedPanelElement */(null);
+    beforeEach(async () => {
+      element = await noAutoFixture();
+    });
+
+    it('returns set value', () => {
+      element.listType = 'default';
+      assert.equal(element.listType, 'default');
+    });
+
+    it('computes [hasTwoLinesValue]', () => {
+      element.listType = 'default';
+      assert.isTrue(element[internals.hasTwoLinesValue]);
+    });
+
+    it('updates styles', () => {
+      element.listType = 'compact';
+      assert.equal(element.style.getPropertyValue('--anypoint-item-icon-width'), '36px');
+    });
+  });
+
+  describe('#selectedItems', () => {
+    let element = /** @type SavedPanelElement */(null);
+    beforeEach(async () => {
+      element = await noAutoFixture();
+    });
+
+    it('returns null when not selectable', () => {
+      element.selectable = false;
+      assert.equal(element.selectedItems, null);
+    });
+
+    it('returns empty array when no selection', () => {
+      element.selectable = true;
+      assert.deepEqual(element.selectedItems, []);
+    });
+
+    it('returns selected items', async () => {
+      element.selectable = true;
+      element.requests = /** @type ARCSavedRequest[] */ (generator.generateHistoryRequestsData({
+        requestsSize: 2
+      }));
+      await nextFrame();
+      const node = /** @type HTMLElement */ (element.shadowRoot.querySelector('.request-list-item'));
+      node.click();
+      assert.deepEqual(element.selectedItems, [element.requests[0]._id]);
+    });
+
+    it('sets selected items', () => {
+      element.selectable = true;
+      const arr = ['a', 'b'];
+      element.selectedItems = arr;
+      assert.deepEqual(element.selectedItems, arr);
+    });
+
+    it('sets selected items only once', () => {
+      element.selectable = true;
+      const arr = ['a', 'b'];
+      element.selectedItems = arr;
+      const spy = sinon.spy(element, 'requestUpdate');
+      element.selectedItems = arr;
+      assert.isFalse(spy.called);
+    });
+  });
+
+  describe('#selectable', () => {
+    let element = /** @type SavedPanelElement */(null);
+    beforeEach(async () => {
+      element = await noAutoFixture();
+    });
+
+    it('returns set value', () => {
+      element.selectable = false;
+      assert.isFalse(element.selectable);
+    });
+
+    it('sets value only once', () => {
+      element.selectable = true;
+      const spy = sinon.spy(element, 'requestUpdate');
+      element.selectable = true;
+      assert.isFalse(spy.called);
+    });
+
+    it('clears selected items', () => {
+      element.selectable = false;
+      element.selectedItems = ['test'];
+      element.selectable = true;
+      assert.deepEqual(element.selectedItems, []);
+    });
+  });
+
+  describe('[projectChangeHandler]()', () => {
+    before(async () => {
+      await generator.insertProjectsData({
+        projectsSize: 20,
+        autoRequestId: true
+      });
+    });
+
+    after(async () => {
+      await generator.destroySavedRequestData();
+    });
+
+    let element = /** @type SavedPanelElement */(null);
+    beforeEach(async () => {
+      element = await afterProjectQueryFixture();
+      const [project] = element.projects;
+      element.project = project;
       element.type = 'project';
     });
 
@@ -98,6 +268,19 @@ describe('RequestsListMixin (saved)', () => {
         item,
       });
       assert.notEqual(element.project._id, 'other-id');
+    });
+
+    it('reads project data when missing on the event', (done) => {
+      const item = { ...element.project };
+      element[internals.updateProjectOrder] = (project) => {
+        assert.equal(project._id, item._id);
+        done();
+        return true;
+      };
+      ArcModelEvents.Project.State.update(document.body, {
+        id: item._id,
+        rev: item._rev,
+      });
     });
   });
 
@@ -249,36 +432,6 @@ describe('RequestsListMixin (saved)', () => {
     });
   });
 
-  describe('[requestChangedHandler]()', () => {
-    let element = /** @type SavedPanelElement */(null);
-    beforeEach(async () => {
-      const data = /** @type ARCSavedRequest[] */ (generator.generateHistoryRequestsData({
-        requestsSize: 2
-      }));
-      element = await noAutoFixture();
-      element.requests = data;
-      await nextFrame();
-    });
-
-    it('removes a request from the list', () => {
-      const [item] = element.requests;
-      ArcModelEvents.Request.State.delete(document.body, 'saved', item._id, 'test');
-      const hasRequest = element.requests.some((i) => i._id === item._id);
-      assert.isFalse(hasRequest);
-      assert.lengthOf(element.requests, 1);
-    });
-
-    it('ignores unknown request', () => {
-      ArcModelEvents.Request.State.delete(document.body, 'saved', 'test', 'test');
-      assert.lengthOf(element.requests, 2);
-    });
-
-    it('ignores when no requests', () => {
-      element.requests = undefined;
-      ArcModelEvents.Request.State.delete(document.body, 'saved', 'test', 'test');
-    });
-  });
-
   describe('[projectRequestChanged]()', () => {
     let element = /** @type SavedPanelElement */(null);
     const projectId = 'test-project';
@@ -345,7 +498,7 @@ describe('RequestsListMixin (saved)', () => {
       const item = genProjectItem();
       const project = generator.createProjectObject();
       project._id = projectId;
-      project.requests = element.requests.map((item) => item._id);
+      project.requests = element.requests.map((it) => it._id);
       project.requests.splice(1, 0, item._id);
       element.project = project;
       ArcModelEvents.Request.State.update(document.body, 'saved', {
@@ -397,6 +550,36 @@ describe('RequestsListMixin (saved)', () => {
   describe('[requestChangedHandler]()', () => {
     let element = /** @type SavedPanelElement */(null);
     beforeEach(async () => {
+      const data = /** @type ARCSavedRequest[] */ (generator.generateRequests({
+        requestsSize: 2
+      }));
+      element = await noAutoFixture();
+      element.requests = data;
+      await nextFrame();
+    });
+
+    it('removes a request from the list', () => {
+      const [item] = element.requests;
+      ArcModelEvents.Request.State.delete(document.body, 'saved', item._id, 'test');
+      const hasRequest = element.requests.some((i) => i._id === item._id);
+      assert.isFalse(hasRequest);
+      assert.lengthOf(element.requests, 1);
+    });
+
+    it('ignores unknown request', () => {
+      ArcModelEvents.Request.State.delete(document.body, 'saved', 'test', 'test');
+      assert.lengthOf(element.requests, 2);
+    });
+
+    it('ignores when no requests', () => {
+      element.requests = undefined;
+      ArcModelEvents.Request.State.delete(document.body, 'saved', 'test', 'test');
+    });
+  });
+
+  describe('[requestChangedHandler]()', () => {
+    let element = /** @type SavedPanelElement */(null);
+    beforeEach(async () => {
       element = await noAutoFixture();
       element.requests = generator.generateRequests({
         requestsSize: 10
@@ -428,6 +611,37 @@ describe('RequestsListMixin (saved)', () => {
       });
       await nextFrame();
       assert.isTrue(spy.called);
+    });
+  });
+
+  describe('[requestChangedHandler]() with data store', () => {
+    before(async () => {
+      await generator.insertSavedRequestData({
+        projectsSize: 1,
+        requestsSize: 10,
+      });
+    });
+    
+    after(async () => {
+      await generator.destroySavedRequestData();
+    });
+
+    let element = /** @type SavedPanelElement */(null);
+    beforeEach(async () => {
+      element = await afterQueryFixture();
+    });
+
+    it('reads the request data when missing on event', (done) => {
+      const [item] = element.requests;
+      element[internals.requestChanged] = (request) => {
+        assert.equal(request._id, item._id);
+        done();
+      };
+      item._rev = 'test-rev';
+      ArcModelEvents.Request.State.update(document.body, 'history', {
+        id: item._id,
+        rev: item._rev,
+      });
     });
   });
 
@@ -484,6 +698,309 @@ describe('RequestsListMixin (saved)', () => {
       element.type = 'project';
       const result = element[internals.readType]();
       assert.equal(result, 'saved');
+    });
+  });
+
+  describe('content rendering', () => {
+    describe('selectable mode', () => {
+      before(async () => {
+        await generator.insertSavedRequestData({
+          requestsSize: 10,
+        });
+      });
+      
+      after(async () => {
+        await generator.destroySavedRequestData();
+      });
+
+      let element = /** @type SavedPanelElement */(null);
+      beforeEach(async () => {
+        element = await afterQueryFixture();
+      });
+
+      it('does not render selection controls when not selectable', async () => {
+        element.selectable = false;
+        await nextFrame();
+        const node = element.shadowRoot.querySelector('.request-list-item anypoint-checkbox');
+        assert.notOk(node);
+      });
+
+      it('opens request on an item click', async () => {
+        element.selectable = false;
+        await nextFrame();
+        const node = /** @type HTMLElement */ (element.shadowRoot.querySelector('.request-list-item'));
+        const spy = sinon.spy();
+        element.addEventListener(ArcNavigationEventTypes.navigateRequest, spy);
+        node.click();
+        assert.isTrue(spy.called);
+      });
+
+      it('selects an item', () => {
+        const node = /** @type HTMLElement */ (element.shadowRoot.querySelector('.request-list-item'));
+        node.click();
+        assert.deepEqual(element.selectedItems, [element.requests[0]._id]);
+      });
+
+      it('deselects an item', () => {
+        element.selectedItems = [element.requests[0]._id];
+        const node = /** @type HTMLElement */ (element.shadowRoot.querySelector('.request-list-item'));
+        node.click();
+        assert.deepEqual(element.selectedItems, []);
+      });
+
+      it('does not opens request when selecting an item', () => {
+        const node = /** @type HTMLElement */ (element.shadowRoot.querySelector('.request-list-item'));
+        const spy = sinon.spy();
+        element.addEventListener(ArcNavigationEventTypes.navigateRequest, spy);
+        node.click();
+        assert.isFalse(spy.called);
+      });
+    });
+
+    describe('listActions mode', () => {
+      before(async () => {
+        await generator.insertSavedRequestData({
+          requestsSize: 10,
+        });
+      });
+      
+      after(async () => {
+        await generator.destroySavedRequestData();
+      });
+
+      let element = /** @type SavedPanelElement */(null);
+      beforeEach(async () => {
+        element = await afterQueryFixture();
+      });
+
+      it('does not render list actions', async () => {
+        element.listActions = false;
+        await nextFrame();
+        const node = element.shadowRoot.querySelector('.request-list-item anypoint-button');
+        assert.notOk(node);
+      });
+
+      it('renders "details" list action', () => {
+        const node = element.shadowRoot.querySelector('.request-list-item anypoint-button[data-action="item-detail"]');
+        assert.ok(node);
+      });
+
+      it('"details" button click does not select the request', () => {
+        const node = /** @type HTMLElement */ (element.shadowRoot.querySelector('.request-list-item anypoint-button[data-action="item-detail"]'));
+        node.click();
+        assert.deepEqual(element.selectedItems, []);
+      });
+
+      it('"details" button dispatches the details event', () => {
+        const node = /** @type HTMLElement */ (element.shadowRoot.querySelector('.request-list-item anypoint-button[data-action="item-detail"]'));
+        const spy = sinon.spy();
+        element.addEventListener('details', spy);
+        node.click();
+        assert.isTrue(spy.called);
+      });
+
+      it('renders "open" list action', () => {
+        const node = element.shadowRoot.querySelector('.request-list-item anypoint-button[data-action="open-item"]');
+        assert.ok(node);
+      });
+
+      it('"open" button click does not select the request', () => {
+        const node = /** @type HTMLElement */ (element.shadowRoot.querySelector('.request-list-item anypoint-button[data-action="open-item"]'));
+        node.click();
+        assert.deepEqual(element.selectedItems, []);
+      });
+
+      it('"open" button dispatches the request open event', () => {
+        const node = /** @type HTMLElement */ (element.shadowRoot.querySelector('.request-list-item anypoint-button[data-action="open-item"]'));
+        const spy = sinon.spy();
+        element.addEventListener(ArcNavigationEventTypes.navigateRequest, spy);
+        node.click();
+        assert.isTrue(spy.called);
+      });
+    });
+  });
+
+  describe('[dragStartHandler]()', () => {
+    let element = /** @type SavedPanelElement */(null);
+    beforeEach(async () => {
+      const data = /** @type ARCSavedRequest[] */ (generator.generateRequests({
+        requestsSize: 2
+      }));
+      element = await noAutoFixture();
+      element.requests = data;
+      element.draggableEnabled = true;
+      await nextFrame();
+    });
+
+    it('does nothing when draggable is not enabled', () => {
+      element.draggableEnabled = false;
+      const e = new DragEvent('dragstart', {
+        dataTransfer: new DataTransfer(),
+      });
+      const node = /** @type HTMLElement */ (element.shadowRoot.querySelector('.request-list-item'));
+      node.dispatchEvent(e);
+      const result = [...e.dataTransfer.types];
+      assert.deepEqual(result, []);
+    });
+
+    it('adds arc/id data', () => {
+      const e = new DragEvent('dragstart', {
+        dataTransfer: new DataTransfer(),
+      });
+      const node = /** @type HTMLElement */ (element.shadowRoot.querySelector('.request-list-item'));
+      node.dispatchEvent(e);
+      const id = e.dataTransfer.getData('arc/id');
+      assert.equal(id, element.requests[0]._id);
+    });
+
+    it('adds arc/type data', () => {
+      const e = new DragEvent('dragstart', {
+        dataTransfer: new DataTransfer(),
+      });
+      const node = /** @type HTMLElement */ (element.shadowRoot.querySelector('.request-list-item'));
+      node.dispatchEvent(e);
+      const id = e.dataTransfer.getData('arc/type');
+      assert.equal(id, 'saved');
+    });
+
+    it('adds arc/request data', () => {
+      const e = new DragEvent('dragstart', {
+        dataTransfer: new DataTransfer(),
+      });
+      const node = /** @type HTMLElement */ (element.shadowRoot.querySelector('.request-list-item'));
+      node.dispatchEvent(e);
+      const id = e.dataTransfer.getData('arc/request');
+      assert.equal(id, '1');
+    });
+
+    it('adds arc/source data', () => {
+      const e = new DragEvent('dragstart', {
+        dataTransfer: new DataTransfer(),
+      });
+      const node = /** @type HTMLElement */ (element.shadowRoot.querySelector('.request-list-item'));
+      node.dispatchEvent(e);
+      const id = e.dataTransfer.getData('arc/source');
+      assert.equal(id, 'saved-panel');
+    });
+  });
+
+  describe('[prepareQuery]()', () => {
+    let element = /** @type SavedPanelElement */(null);
+    beforeEach(async () => {
+      element = await noAutoFixture();
+    });
+
+    it('returns a string value', () => {
+      // @ts-ignore
+      const result = element[internals.prepareQuery](2);
+      assert.equal(result, '2');
+    });
+
+    it('returns lower case value', () => {
+      const result = element[internals.prepareQuery]('AaBb');
+      assert.equal(result, 'aabb');
+    });
+
+    it('removes first "_" character', () => {
+      const result = element[internals.prepareQuery]('_design');
+      assert.equal(result, 'design');
+    });
+  });
+
+  describe('[loadPage]()', () => {
+    before(async () => {
+      await generator.insertSavedRequestData({
+        projectsSize: 1,
+        requestsSize: 40,
+      });
+    });
+    
+    after(async () => {
+      await generator.destroySavedRequestData();
+    });
+
+    let element = /** @type SavedPanelElement */(null);
+    beforeEach(async () => {
+      element = await queryLimitFixture();
+    });
+
+    it('ignores when searching for an item', async () => {
+      element.isSearch = true;
+      await nextFrame();
+      await element[internals.loadPage]();
+      assert.isUndefined(element.requests);
+    });
+
+    it('ignores when querying', async () => {
+      element[internals.queryingProperty] = true;
+      await nextFrame();
+      await element[internals.loadPage]();
+      assert.isUndefined(element.requests);
+    });
+
+    it('adds items to the list of requests', async () => {
+      await element[internals.loadPage]();
+      assert.lengthOf(element.requests, element.pageLimit);
+    });
+
+    it('sets page token value', async () => {
+      await element[internals.loadPage]();
+      assert.typeOf(element[internals.pageTokenValue], 'string');
+    });
+
+    it('reuses page token with the next query', async () => {
+      await element[internals.loadPage]();
+      await element[internals.loadPage]();
+      assert.lengthOf(element.requests, element.pageLimit * 2);
+    });
+
+    it('sets a new page token after next query', async () => {
+      await element[internals.loadPage]();
+      const old = element[internals.pageTokenValue];
+      await element[internals.loadPage]();
+      assert.notEqual(element[internals.pageTokenValue], old);
+    });
+
+    it('sets querying property', async () => {
+      const p = element[internals.loadPage]();
+      assert.isTrue(element.querying);
+      await p;
+    });
+
+    it('resets querying property after the query', async () => {
+      await element[internals.loadPage]();
+      assert.isFalse(element.querying);
+    });
+
+    it('resets querying property after an error', async () => {
+      element.addEventListener(ArcModelEventTypes.Request.list, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        // @ts-ignore
+        e.detail.result = Promise.reject(new Error('test'));
+      });
+      try {
+        await element[internals.loadPage]();
+      } catch (e) {
+        // 
+      }
+      assert.isFalse(element.querying);
+    });
+
+    it('throws error when model error', async () => {
+      element.addEventListener(ArcModelEventTypes.Request.list, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        // @ts-ignore
+        e.detail.result = Promise.reject(new Error('test'));
+      });
+      let called = false;
+      try {
+        await element[internals.loadPage]();
+      } catch (e) {
+        called = true;
+      }
+      assert.isTrue(called);
     });
   });
 });

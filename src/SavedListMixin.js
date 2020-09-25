@@ -38,6 +38,7 @@ import {
   dropHandler,
   isValidDragTarget,
   unavailableTemplate,
+  exportKindValue,
 } from './internals.js';
 import { savedSort, computeA11yCommand } from './Utils.js';
 import { RequestsListMixin } from './RequestsListMixin.js';
@@ -74,6 +75,7 @@ const mxFunction = base => {
        * @type {ARCSavedRequest[]}
       */  
       this.requests = undefined;
+      this[exportKindValue] = 'ARC#SavedExport';
     }
 
     connectedCallback() {

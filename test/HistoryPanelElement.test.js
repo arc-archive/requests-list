@@ -32,7 +32,7 @@ describe('HistoryPanelElement', () => {
       assert.isTrue(element[internals.toggleSelectAllValue]);
     });
 
-    it('sets selects all items', () => {
+    it('sets selected items', () => {
       const items = /** @type ARCHistoryRequest[] */ (generator.generateHistoryRequestsData());
       element[internals.appendItems](items);
       element.toggleSelection();

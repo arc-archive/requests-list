@@ -27,7 +27,10 @@ describe('RequestsListMixin (history)', () => {
    */
   async function afterQueryFixture() {
     const element = /** @type HistoryPanelElement */ (await fixture(html`<history-panel></history-panel>`));
-    await oneEvent(element, 'queryingchange');
+    // the query could potentially start already
+    if (!element.querying) {
+      await oneEvent(element, 'queryingchange');
+    }
     await oneEvent(element, 'queryingchange');
     return element;
   }
@@ -164,7 +167,7 @@ describe('RequestsListMixin (history)', () => {
 
     it('does nothing when [makingQueryValue] flag is set', async () => {
       let called = false;
-      element[internals.loadPage] = () => { called = true };
+      element[internals.loadPage] = async () => { called = true };
       element[internals.makingQueryValue] = true;
       element.loadNext();
       assert.isFalse(called);
@@ -172,7 +175,7 @@ describe('RequestsListMixin (history)', () => {
 
     it('do nothing when isSearch flag is set', async () => {
       let called = false;
-      element[internals.loadPage] = () => { called = true };
+      element[internals.loadPage] = async () => { called = true };
       element.isSearch = true;
       element.loadNext();
       assert.isFalse(called);
@@ -194,20 +197,20 @@ describe('RequestsListMixin (history)', () => {
     });
 
     it('does nothing when query is not set', async () => {
-      const p = element.query();
+      const p = element.query(undefined);
       assert.isFalse(element.querying);
       await p;
     });
 
     it('returns a promise when query is not set', async () => {
-      const p = element.query();
+      const p = element.query(undefined);
       assert.typeOf(p.then, 'function');
       await p;
     });
 
     it('returns promise when query is not set and isSearch', async () => {
       element.isSearch = true;
-      const p = element.query();
+      const p = element.query(undefined);
       assert.typeOf(p.then, 'function');
       await p;
     });
@@ -216,7 +219,7 @@ describe('RequestsListMixin (history)', () => {
       element.isSearch = true;
       let called = false;
       element.refresh = () => { called = true };
-      const p = element.query();
+      const p = element.query(undefined);
       assert.isTrue(called);
       await p;
     });

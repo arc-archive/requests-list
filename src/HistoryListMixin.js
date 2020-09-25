@@ -38,6 +38,7 @@ import {
   requestDeletedHandler,
   dragStartHandler,
   unavailableTemplate,
+  exportKindValue,
 } from './internals.js';
 import { midnightTimestamp } from './Utils.js';
 import { RequestsListMixin } from './RequestsListMixin.js';
@@ -61,6 +62,7 @@ const mxFunction = base => {
        * @type {HistoryGroup[]}
       */  
       this.requests = undefined;
+      this[exportKindValue] = 'ARC#HistoryExport';
     }
   
     connectedCallback() {

@@ -203,9 +203,7 @@ const mxFunction = base => {
         return;
       }
       this[listTypeValue] = value;
-      if (this.requestUpdate) {
-        this.requestUpdate('listType', old);
-      }
+      this.requestUpdate('listType', old);
       this[hasTwoLinesValue] = hasTwoLines(value);
       this[updateListStyles](value);
     }
@@ -684,7 +682,7 @@ const mxFunction = base => {
      * requests array when order is the same. It also won't change order when
      * request list is different that project's requests list.
      * @param {ARCProject} project Changed project
-     * @return {Boolean} True when order has changed
+     * @return {boolean} True when order has changed
      */
     [updateProjectOrder](project) {
       const { requests } = this;

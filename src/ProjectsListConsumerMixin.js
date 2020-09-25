@@ -150,6 +150,9 @@ const mxFunction = base => {
      */
     [dataImportHandler]() {
       this.refreshProjects();
+      if (super[dataImportHandler]) {
+        super[dataImportHandler]();
+      }
     }
 
     /**
@@ -159,6 +162,9 @@ const mxFunction = base => {
      */
     [dataDestroyHandler](e) {
       const { store } = e;
+      if (super[dataDestroyHandler]) {
+        super[dataDestroyHandler](e);
+      }
       if (!['legacy-projects', 'projects', 'all'].includes(store)) {
         return;
       }

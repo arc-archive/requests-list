@@ -47,6 +47,8 @@ import {
   exportAccept,
   driveExportedTemplate,
   dropTargetTemplate,
+  readType,
+  exportKindValue,
 } from './internals.js';
 
 /** @typedef {import('@advanced-rest-client/arc-ie').ExportOptionsElement} ExportOptionsElement */
@@ -130,7 +132,7 @@ export class RequestsPanelElement extends RequestsListMixin(LitElement) {
     this[selectedItemsValue] = undefined;
     this[notifySelection]();
     this[deleteUndoOpened] = true;
-    this.requestUpdate();
+    await this.requestUpdate();
   }
 
   [deleteAll]() {
@@ -144,7 +146,8 @@ export class RequestsPanelElement extends RequestsListMixin(LitElement) {
   }
 
   [deleteConfirm]() {
-    ArcModelEvents.destroy(this, [this.type]);
+    const type = this[readType]();
+    ArcModelEvents.destroy(this, [type]);
     this[deleteCancel]();
     if (this[selectedItemsValue]) {
       this[selectedItemsValue] = undefined;
@@ -159,6 +162,7 @@ export class RequestsPanelElement extends RequestsListMixin(LitElement) {
     }
     await ArcModelEvents.Request.undeleteBulk(this, this.type, deleted);
     this[deleteLatestList] = undefined;
+    this[deleteUndoOpened] = false;
     this.requestUpdate();
   }
 
@@ -199,10 +203,18 @@ export class RequestsPanelElement extends RequestsListMixin(LitElement) {
    * @param {ProviderOptions} providerOptions
    */
   async [exportAll](exportOptions, providerOptions) {
+    let dataType = this[readType]();
+    if (dataType === 'saved') {
+      dataType = 'requests';
+    }
     const data = {
-      [this.type]: true,
+      [dataType]: true,
     };
-    const result = await ExportEvents.nativeData(this, data, exportOptions, providerOptions);
+    const eo = { ...exportOptions };
+    if (!eo.kind && this[exportKindValue]) {
+      eo.kind = this[exportKindValue];
+    }
+    const result = await ExportEvents.nativeData(this, data, eo, providerOptions);
     if (!result.interrupted && exportOptions.provider === 'drive') {
       // @ts-ignore
       this.shadowRoot.querySelector('#driveExport').open = true;
@@ -216,10 +228,18 @@ export class RequestsPanelElement extends RequestsListMixin(LitElement) {
    */
   async [exportSelected](selected, exportOptions, providerOptions) {
     const requests = await ArcModelEvents.Request.readBulk(this, this.type, selected);
+    let dataType = this[readType]();
+    if (dataType === 'saved') {
+      dataType = 'requests';
+    }
     const data = {
-      [this.type]: requests,
+      [dataType]: requests,
     };
-    const result = await ExportEvents.nativeData(this, data, exportOptions, providerOptions);
+    const eo = { ...exportOptions };
+    if (!eo.kind && this[exportKindValue]) {
+      eo.kind = this[exportKindValue];
+    }
+    const result = await ExportEvents.nativeData(this, data, eo, providerOptions);
     if (!result.interrupted && exportOptions.provider === 'drive') {
       // @ts-ignore
       this.shadowRoot.querySelector('#driveExport').open = true;
@@ -348,7 +368,7 @@ export class RequestsPanelElement extends RequestsListMixin(LitElement) {
         <p>All requests from the data store will be permanently deleted.</p>
         <p>Do you wish to continue?</p>
         <div class="buttons">
-          <anypoint-button>Make backup</anypoint-button>
+          <anypoint-button @click="${this[exportAction]}">Make backup</anypoint-button>
           <anypoint-button class="right-button" @click="${this[deleteCancel]}">Cancel</anypoint-button>
           <anypoint-button @click="${this[deleteConfirm]}">Delete</anypoint-button>
         </div>
@@ -404,7 +424,7 @@ export class RequestsPanelElement extends RequestsListMixin(LitElement) {
       <export-options
         ?compatibility="${compatibility}"
         withEncrypt
-        file="arc-history-list.arc"
+        file="arc-saved-list.arc"
         provider="file"
         @accept="${this[exportAccept]}"
         @cancel="${this[exportCancel]}"

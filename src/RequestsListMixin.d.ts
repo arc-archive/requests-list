@@ -47,6 +47,7 @@ import {
   dragStartHandler,
   dropTargetTemplate,
   unavailableTemplate,
+  listScrollHandler,
 } from './internals.js';
 
 declare function RequestsListMixin<T extends new (...args: any[]) => {}>(base: T): T & RequestsListMixinConstructor;
@@ -362,6 +363,8 @@ declare interface RequestsListMixin {
    * Additionally the function sets default `effectAllowed` to copy.
    */
   [dragStartHandler](e: DragEvent): void;
+
+  [listScrollHandler](e: Event): void;
 
   /**
    * This method to be implemented by the element to render the list of items.

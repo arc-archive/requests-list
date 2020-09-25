@@ -72,6 +72,7 @@ import {
   dragStartHandler,
   dropTargetTemplate,
   unavailableTemplate,
+  listScrollHandler,
 } from './internals.js';
 
 /** @typedef {import('@advanced-rest-client/arc-models').ARCRequestDeletedEvent} ARCRequestDeletedEvent */
@@ -872,6 +873,17 @@ const mxFunction = base => {
       dt.setData('arc/request', '1');
       dt.setData('arc/source', this.localName);
       dt.effectAllowed = 'copy';
+    }
+
+    /**
+     * @param {Event} e
+     */
+    [listScrollHandler](e) {
+      const node = /** @type HTMLDivElement */ (e.target);
+      const delta = node.scrollHeight - (node.scrollTop + node.offsetHeight);
+      if (delta < 120) {
+        this.loadNext();
+      }
     }
 
     /**

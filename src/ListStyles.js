@@ -3,6 +3,20 @@ import { css } from 'lit-element';
 export default css`
 :host {
   --anypoint-item-icon-width: 72px;
+  position: relative;
+  display: flex;
+}
+
+progress {
+  position: static;
+  left: 0;
+  right: 0;
+  width: 100%;
+}
+
+.list {
+  flex: 1;
+  overflow: auto;
 }
 
 .history-group {
@@ -52,6 +66,10 @@ http-method-label {
 
 http-method-label.with-margin {
   margin-right: 12px;
+}
+
+.request-list-item {
+  user-select: none;
 }
 
 :host([listtype="comfortable"]) anypoint-item-body,

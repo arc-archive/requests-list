@@ -7,18 +7,6 @@ export default css`
   position: relative;
 }
 
-progress {
-  position: absolute;
-  left: 0;
-  right: 0;
-  width: 100%;
-}
-
-.list {
-  flex: 1;
-  overflow: auto;
-}
-
 .content-actions {
   display: flex;
   align-items: center;

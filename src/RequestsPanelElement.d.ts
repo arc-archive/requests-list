@@ -14,7 +14,6 @@ import {
   searchInputTemplate,
   searchHandler,
   searchEmptyTemplate,
-  listScrollHandler,
   confirmDeleteAllTemplate,
   deleteAction,
   deleteSelected,
@@ -59,8 +58,6 @@ export declare class RequestsPanelElement {
   [contentActionHandler](e: PointerEvent): void;
 
   [searchHandler](e: CustomEvent): Promise<void>;
-
-  [listScrollHandler](e: Event): void;
 
   [deleteAction](): void;
 

@@ -106,17 +106,6 @@ export class RequestsPanelElement extends RequestsListMixin(LitElement) {
     await this.query(value);
   }
 
-  /**
-   * @param {Event} e
-   */
-  [listScrollHandler](e) {
-    const node = /** @type HTMLDivElement */ (e.target);
-    const delta = node.scrollHeight - (node.scrollTop + node.offsetHeight);
-    if (delta < 120) {
-      this.loadNext();
-    }
-  }
-
   [deleteAction]() {
     const selected = /** @type string[] */(this[selectedItemsValue]);
     if (!Array.isArray(selected) || !selected.length) {

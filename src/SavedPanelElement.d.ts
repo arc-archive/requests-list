@@ -22,16 +22,12 @@ export declare interface SavedPanelElement extends ProjectsListConsumerMixin, Sa
 export declare class SavedPanelElement {
   [notifyProject](): Promise<void>;
 
-  /**
-   * @param {PointerEvent} e
-   */
-  [contentActionHandler](e): void;
+  [contentActionHandler](e: PointerEvent): void;
 
   /**
    * Listens for Enter + cmd/ctrl button to accept project selection.
-   * @param {KeyboardEvent} e
    */
-  [projectAddKeydown](e): void;
+  [projectAddKeydown](e: KeyboardEvent): void;
 
   /**
    * Updates projects for requests when confirming the change action.

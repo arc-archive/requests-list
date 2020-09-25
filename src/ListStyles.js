@@ -12,7 +12,7 @@ export default css`
   padding: 4px 16px;
   display: flex;
   align-items: center;
-  background-color: #eceff1;
+  background-color: var(--requests-list-history-group-header-background-color, #eceff1);
 }
 
 .history-group-label {
@@ -121,7 +121,7 @@ anypoint-button {
   right: 0;
   bottom: 0;
   left: 0;
-  background-color: rgba(255, 255, 255, 0.84);
+  background-color: var(--requests-list-drop-message-background-color, rgba(255, 255, 255, 0.84));
   z-index: 10;
   align-items: center;
   justify-content: center;

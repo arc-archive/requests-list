@@ -9,14 +9,14 @@ module.exports = (config) => {
       testName: 'requests-list',
     },
   });
-  // slConfig.browsers = [
-  //   'SL_Chrome',
-  //   'SL_Chrome-1',
-  //   'SL_Firefox',
-  //   'SL_Firefox-1',
-  //   'SL_Safari',
-  //   // 'SL_EDGE'
-  // ];
+  slConfig.browsers = [
+    'SL_Chrome',
+    'SL_Chrome-1',
+    'SL_Firefox',
+    'SL_Firefox-1',
+    // 'SL_Safari',
+    'SL_EDGE'
+  ];
   config.set(merge(createBaseConfig(config), slConfig));
   return config;
 };

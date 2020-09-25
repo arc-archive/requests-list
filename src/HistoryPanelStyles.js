@@ -22,8 +22,8 @@ progress {
 .content-actions {
   display: flex;
   align-items: center;
-  border-bottom: 1px #E5E5E5 solid;
-  background-color: #fff;
+  border-bottom: 1px var(--requests-list-content-actions-border-color, #E5E5E5) solid;
+  background-color: var(--requests-list-content-actions-background-color, #fff);
   padding: 4px 0;
 }
 
@@ -32,12 +32,12 @@ progress {
 }
 
 .content-actions arc-icon {
-  color: #000;
+  color: var(--requests-list-content-actions-icon-color, #000);
 }
 
 .selection-divider {
   height: 24px;
-  border: 1px solid #E5E5E5;
+  border: 1px solid var(--requests-list-content-actions-divider-color, #E5E5E5);
   width: 0px;
   margin-left: 12px;
   margin-right: 12px;
@@ -74,11 +74,11 @@ progress {
 
 .delete-all-overlay {
   z-index: 10;
-  background-color: rgba(0, 0, 0, 0.72);
+  background-color: var(--requests-list-delete-overlay-color, rgba(0, 0, 0, 0.72));
 }
 
 .delete-all-dialog {
-  background-color: #fff;
+  background-color: var(--requests-list-delete-dialog-background-color, #fff);
   padding: 24px;
   position: relative;
   z-index: 11;
@@ -101,13 +101,13 @@ progress {
 }
 
 .snackbar-button {
-  color: #fff;
+  color: var(--requests-list-delete-snackbar-color, #fff);
 }
 
 bottom-sheet {
   width: var(--bottom-sheet-width, 100%);
   max-width: var(--bottom-sheet-max-width, 700px);
-  right: var(--history-panel-bottom-sheet-right, 40px);
-  left: var(--history-panel-bottom-sheet-left, auto);
+  right: var(--requests-list-bottom-sheet-right, 40px);
+  left: var(--requests-list-bottom-sheet-left, auto);
 }
 `;

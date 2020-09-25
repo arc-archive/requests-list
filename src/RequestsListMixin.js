@@ -34,6 +34,7 @@ import {
   hasTwoLines 
 } from './Utils.js';
 import {
+  busyTemplate,
   listTypeValue,
   hasTwoLinesValue,
   requestDeletedHandler,
@@ -959,6 +960,16 @@ const mxFunction = base => {
      */
     [unavailableTemplate]() {
       return html``;
+    }
+
+    /**
+     * @returns {TemplateResult|string} A template for the loader element
+     */
+    [busyTemplate]() {
+      if (!this.querying) {
+        return '';
+      }
+      return html`<progress></progress>`;
     }
   }
   return RequestsListMixinImpl;

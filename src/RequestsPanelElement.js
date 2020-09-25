@@ -264,16 +264,6 @@ export class RequestsPanelElement extends RequestsListMixin(LitElement) {
   }
 
   /**
-   * @returns {TemplateResult|string} A template for the loader element
-   */
-  [busyTemplate]() {
-    if (!this.querying) {
-      return '';
-    }
-    return html`<progress></progress>`;
-  }
-
-  /**
    * @returns {TemplateResult|string} A template for the list actions
    */
   [contentActionsTemplate]() {

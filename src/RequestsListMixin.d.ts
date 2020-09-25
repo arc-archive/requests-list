@@ -10,6 +10,7 @@ import {
 } from '@advanced-rest-client/arc-models';
 import { TemplateResult } from 'lit-html';
 import {
+  busyTemplate,
   listTypeValue,
   hasTwoLinesValue,
   requestDeletedHandler,
@@ -395,4 +396,9 @@ declare interface RequestsListMixin {
    * @returns A template for when data are unavailable.
    */
   [unavailableTemplate](): TemplateResult|string;
+
+  /**
+   * @returns A template for the loader element
+   */
+  [busyTemplate](): TemplateResult|string;
 }

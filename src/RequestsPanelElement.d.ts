@@ -1,4 +1,4 @@
-import { LitElement, html, CSSResult, TemplateResult } from 'lit-element';
+import { LitElement, CSSResult, TemplateResult } from 'lit-element';
 import '@advanced-rest-client/arc-icons/arc-icon.js';
 import '@anypoint-web-components/anypoint-input/anypoint-input.js';
 import '@anypoint-web-components/anypoint-button/anypoint-icon-button.js';
@@ -7,7 +7,6 @@ import '@advanced-rest-client/bottom-sheet/bottom-sheet.js';
 import '@advanced-rest-client/arc-ie/export-options.js';
 import { RequestsListMixin } from './RequestsListMixin.js';
 import {
-  busyTemplate,
   contentActionsTemplate,
   customActionsTemplate,
   contentActionHandler,
@@ -90,11 +89,6 @@ export declare class RequestsPanelElement {
   [exportSelected](selected: string[], exportOptions: DataExport.ExportOptions, providerOptions: DataExport.ProviderOptions): Promise<void>;
 
   render(): TemplateResult;
-
-  /**
-   * @returns A template for the loader element
-   */
-  [busyTemplate](): TemplateResult|string;
 
   /**
    * @returns A template for the list actions

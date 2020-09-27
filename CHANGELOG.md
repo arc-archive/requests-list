@@ -19,3 +19,33 @@
 * updated Travis configuration to connect to Sauce Labs [2ec536d](https://github.com/advanced-rest-client/requests-list/commit/2ec536d878e494fbfd3d47d24fc29e7e17ab5c7f) by Pawel
 
 
+<a name="0.1.3"></a>
+## [0.1.3](https://github.com/advanced-rest-client/requests-list/compare/0.0.2...0.1.3) (2020-09-27)
+
+### Build
+
+* bumping version [2068d7c](https://github.com/advanced-rest-client/requests-list/commit/2068d7ce72f96d356a896716551430c925bd7f23) by Pawel
+
+
+### Update
+
+* [ci skip] automated merge master->stage. syncing main branches [f4a222e](https://github.com/advanced-rest-client/requests-list/commit/f4a222e0822fa6cda30ec7bc2a1e291886f0dde9) by Ci agent
+* finalizing the component [6dbe4b7](https://github.com/advanced-rest-client/requests-list/commit/6dbe4b74b68cf2d258cc38a825253f4cb99883d8) by Pawel
+
+
+### Bug Fixes
+
+* fixing minor issues [fd80a95](https://github.com/advanced-rest-client/requests-list/commit/fd80a950c55c42803432ca70fed7c75ed9dfa8e1) by Pawel
+
+
+### Refactor
+
+* moving styles and templates to mixin functions [64f4b47](https://github.com/advanced-rest-client/requests-list/commit/64f4b47c8fd303edfcb2b34f2079c43187d789a3) by Pawel
+* moving progress template to the mixin [fc30f0d](https://github.com/advanced-rest-client/requests-list/commit/fc30f0d734fdf76d893e29d78ece3a146a53703e) by Pawel
+
+
+### Testing
+
+* finishing tests [261ba91](https://github.com/advanced-rest-client/requests-list/commit/261ba91b56e473adbf0ba815ae46e460fe36e3d9) by Pawel
+
+

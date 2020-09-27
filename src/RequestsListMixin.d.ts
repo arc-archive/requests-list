@@ -290,7 +290,7 @@ declare interface RequestsListMixin {
    * 
    * @param {ARCProjectUpdatedEvent} e
    */
-  [projectChangeHandler](e: ARCProjectUpdatedEvent): void;
+  [projectChangeHandler](e: ARCProjectUpdatedEvent): Promise<void>;
 
   /**
    * Updates requests order when project changed.

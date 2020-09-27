@@ -159,4 +159,8 @@ anypoint-button {
   display: flex;
   flex-direction: column;
 }
+
+.list-empty {
+  margin: 0px 12px;
+}
 `;

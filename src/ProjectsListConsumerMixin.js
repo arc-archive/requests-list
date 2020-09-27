@@ -128,7 +128,7 @@ const mxFunction = base => {
       } catch (cause) {
         this[handleError](cause)
       }
-      this[makingProjectsQueryValue] = true;
+      this[makingProjectsQueryValue] = false;
     }
 
     /**

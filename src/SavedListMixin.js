@@ -140,7 +140,7 @@ const mxFunction = base => {
      * @param {DragEvent} e
      */
     [dragOverHandler](e) {
-      if (!this.draggableEnabled || !this[isValidDragTarget](e)) {
+      if (!this.draggableEnabled || !this[isValidDragTarget](e) || e.defaultPrevented) {
         return;
       }
       const dt = e.dataTransfer;
@@ -159,7 +159,7 @@ const mxFunction = base => {
      * @param {DragEvent} e
      */
     [dragLeaveHandler](e) {
-      if (!this.draggableEnabled || !this[isValidDragTarget](e)) {
+      if (!this.draggableEnabled || !this[isValidDragTarget](e) || e.defaultPrevented) {
         return;
       }
       e.preventDefault();
@@ -175,7 +175,7 @@ const mxFunction = base => {
      * @param {DragEvent} e
      */
     async [dropHandler](e) {
-      if (!this.draggableEnabled || !this[isValidDragTarget](e)) {
+      if (!this.draggableEnabled || !this[isValidDragTarget](e) || e.defaultPrevented) {
         return;
       }
       e.preventDefault();
@@ -208,6 +208,7 @@ const mxFunction = base => {
       super[dragStartHandler](e);
       const dt = e.dataTransfer;
       dt.setData('arc/saved', '1');
+      dt.effectAllowed = 'copyMove';
     }
 
     /**

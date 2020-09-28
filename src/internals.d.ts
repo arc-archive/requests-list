@@ -100,3 +100,13 @@ export declare const dropHandler: unique symbol;
 export declare const hasDraggableEventsValue: unique symbol;
 export declare const isValidDragTarget: unique symbol;
 export declare const dropTargetTemplate: unique symbol;
+
+export declare const indexUpdatedHandler: unique symbol;
+export declare const indexDeletedHandler: unique symbol;
+export declare const queryTimeoutValue: unique symbol;
+export declare const openHandler: unique symbol;
+export declare const apiItemTemplate: unique symbol;
+export declare const itemActionsTemplate: unique symbol;
+export declare const itemBodyTemplate: unique symbol;
+export declare const restApiDeleteHandler: unique symbol;
+export declare const noMoreItemsValue: unique symbol;

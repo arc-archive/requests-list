@@ -15,7 +15,11 @@ export class SavedScreenElement extends SavedListMixin(LitElement) {
     if (!requests || !requests.length) {
       return html`<p>No requests on the list</p>`;
     }
-    return this[internals.listTemplate]();
+    return html`
+    <div class="list" @scroll="${this[internals.listScrollHandler]}">
+      ${this[internals.listTemplate]()}
+    </div>
+    `;
   }
 }
 

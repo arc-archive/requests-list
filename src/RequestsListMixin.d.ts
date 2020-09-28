@@ -9,26 +9,21 @@ import {
   ARCModelStateDeleteEvent,
 } from '@advanced-rest-client/arc-models';
 import { TemplateResult } from 'lit-html';
+import { ListMixin, ListMixinConstructor } from './ListMixin';
 import {
   busyTemplate,
-  listTypeValue,
-  hasTwoLinesValue,
   requestDeletedHandler,
   requestChangedHandler,
   projectChangeHandler,
   dataImportHandler,
   dataDestroyHandler,
   readType,
-  updateListStyles,
-  applyListStyles,
   persistRequestsOrder,
   projectRequestChanged,
   requestChanged,
   updateProjectOrder,
   openRequest,
   readProjectRequests,
-  queryingValue,
-  queryingProperty,
   pageTokenValue,
   makingQueryValue,
   loadPage,
@@ -50,7 +45,7 @@ import {
   listScrollHandler,
 } from './internals.js';
 
-declare function RequestsListMixin<T extends new (...args: any[]) => {}>(base: T): T & RequestsListMixinConstructor;
+declare function RequestsListMixin<T extends new (...args: any[]) => {}>(base: T): T & RequestsListMixinConstructor & ListMixinConstructor;
 
 export {RequestsListMixinConstructor};
 export {RequestsListMixin};
@@ -59,7 +54,7 @@ declare interface RequestsListMixinConstructor {
   new(...args: any[]): RequestsListMixin;
 }
 
-declare interface RequestsListMixin {
+declare interface RequestsListMixin extends ListMixin {
   /**
    * The list of request to render.
    * It can be either saved, history or project items.
@@ -88,27 +83,11 @@ declare interface RequestsListMixin {
    */
   projectId?: string;
   /**
-   * Changes information density of list items.
-   * By default it uses material's list item with two lines (72px height)
-   * Possible values are:
-   *
-   * - `default` or empty - regular list view
-   * - `comfortable` - enables MD single line list item vie (52px height)
-   * - `compact` - enables list that has 40px height (touch recommended)
-   * @attribute
-   */
-  listType: string;
-  /**
    * A project object associated with requests.
    * This is only valid when `type` is set to `project`. It is set automatically
    * when `readProjectRequests()` is called.
    */
   project?: ARCProject;
-  /**
-   * Single page query limit.
-   * @attribute
-   */
-  pageLimit: number;
   /**
    * When set this component is in search mode.
    * This means that the list won't be loaded automatically and
@@ -133,11 +112,6 @@ declare interface RequestsListMixin {
    * @attribute
    */
   draggableEnabled: boolean;
-  /**
-   * Enables compatibility with Anypoint platform
-   * @attribute
-   */
-  compatibility: boolean;
 
   /**
    * List of selected requests' ids. It returns null when the `selectable` is not set.
@@ -149,27 +123,10 @@ declare interface RequestsListMixin {
    */
   selectable: boolean;
   /**
-   * When set it adds action buttons into the list elements.
-   * @attribute
-   */
-  listActions: boolean;
-  /**
    * Computed value, true when the project has requests.
    */
   readonly hasRequests: boolean;
-  /**
-   * True when the element is querying the database for the data.
-   */
-  readonly querying: boolean;
-  [listTypeValue]: string;
-  /**
-   * True if the list item should be consisted of two lines of description.
-   */
-  readonly hasTwoLines: boolean;
-  [hasTwoLinesValue]: boolean;
-
-  [queryingValue]: boolean;
-  [queryingProperty]: boolean;
+  
   [pageTokenValue]: string;
   [makingQueryValue]: boolean;
   /**
@@ -263,20 +220,6 @@ declare interface RequestsListMixin {
    * @returns The type used in the ARC request model.
    */
   [readType](): string;
-
-  /**
-   * Updates icon size CSS variable and notifies resize on the list when
-   * list type changes.
-   */
-  [updateListStyles](type: string): void;
-  
-  /**
-   * Applies `--anypoint-item-icon-width` CSS variable.
-   * 
-   * @param size Icon width in pixels.
-   * @param target The target to apply styling. Default to this.
-   */
-  [applyListStyles](size: number, target?: HTMLElement): void;
   
   /**
    * Stores current order of requests in the project.

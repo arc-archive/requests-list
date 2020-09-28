@@ -26,32 +26,27 @@ import '@anypoint-web-components/anypoint-item/anypoint-icon-item.js';
 import '@anypoint-web-components/anypoint-item/anypoint-item-body.js';
 import '@anypoint-web-components/anypoint-collapse/anypoint-collapse.js';
 import '@github/time-elements';
+import { ListMixin } from './ListMixin.js';
 import { 
   projectLegacySort, 
   validateRequestType, 
   idsArrayEqual, 
   isProjectRequest, 
-  hasTwoLines 
 } from './Utils.js';
 import {
   busyTemplate,
-  listTypeValue,
-  hasTwoLinesValue,
   requestDeletedHandler,
   requestChangedHandler,
   projectChangeHandler,
   dataImportHandler,
   dataDestroyHandler,
   readType,
-  updateListStyles,
-  applyListStyles,
   persistRequestsOrder,
   projectRequestChanged,
   requestChanged,
   updateProjectOrder,
   openRequest,
   readProjectRequests,
-  queryingValue,
   queryingProperty,
   pageTokenValue,
   makingQueryValue,
@@ -92,7 +87,7 @@ import {
  * @param {typeof LitElement} base
  */
 const mxFunction = base => {
-  class RequestsListMixinImpl extends base {
+  class RequestsListMixinImpl extends ListMixin(base) {
     static get properties() {
       return {
         /**
@@ -122,27 +117,11 @@ const mxFunction = base => {
          */
         projectId: { type: String },
         /**
-         * Changes information density of list items.
-         * By default it uses material's list item with two lines (72px height)
-         * Possible values are:
-         *
-         * - `default` or empty - regular list view
-         * - `comfortable` - enables MD single line list item vie (52px height)
-         * - `compact` - enables list that has 40px height (touch recommended)
-         * @attribute
-         */
-        listType: { type: String, reflect: true },
-        /**
          * A project object associated with requests.
          * This is only valid when `type` is set to `project`. It is set automatically
          * when `readProjectRequests()` is called.
          */
         project: { type: Object },
-        /**
-         * Single page query limit.
-         * @attribute
-         */
-        pageLimit: { type: Number },
         /**
          * When set this component is in search mode.
          * This means that the list won't be loaded automatically and
@@ -168,20 +147,10 @@ const mxFunction = base => {
          */
         draggableEnabled: { type: Boolean },
         /**
-         * Enables compatibility with Anypoint platform
-         * @attribute
-         */
-        compatibility: { type: Boolean },
-        /**
          * When set the selection controls are rendered
          * @attribute
          */
         selectable: { type: Boolean },
-        /**
-         * When set it adds action buttons into the list elements.
-         * @attribute
-         */
-        listActions: { type: Boolean },
       };
     }
 
@@ -192,51 +161,6 @@ const mxFunction = base => {
     get hasRequests() {
       const { requests } = this;
       return !!(requests && requests.length);
-    }
-
-    get listType() {
-      return this[listTypeValue];
-    }
-
-    set listType(value) {
-      const old = this[listTypeValue];
-      /* istanbul ignore if */
-      if (old === value) {
-        return;
-      }
-      this[listTypeValue] = value;
-      this.requestUpdate('listType', old);
-      this[hasTwoLinesValue] = hasTwoLines(value);
-      this[updateListStyles](value);
-    }
-
-    /**
-     * @returns {boolean} True if the list item should be consisted of two lines of description.
-     */
-    get hasTwoLines() {
-      return this[hasTwoLinesValue];
-    }
-
-    /**
-     * @return {boolean} True when the element is querying the database for the data.
-     */
-    get querying() {
-      return this[queryingValue];
-    }
-  
-    get [queryingProperty]() {
-      return this.querying;
-    }
-  
-    set [queryingProperty](value) {
-      const old = this[queryingValue];
-      /* istanbul ignore if */
-      if (old === value) {
-        return;
-      }
-      this[queryingValue] = value;
-      this.requestUpdate();
-      this.dispatchEvent(new CustomEvent('queryingchange'));
     }
   
     /**
@@ -307,7 +231,6 @@ const mxFunction = base => {
       this[dataImportHandler] = this[dataImportHandler].bind(this);
       this[dataDestroyHandler] = this[dataDestroyHandler].bind(this);
 
-      this[hasTwoLinesValue] = true;
       /**
        * @type {'saved'|'history'|'project'}
        */
@@ -325,16 +248,12 @@ const mxFunction = base => {
        */
       this.projectId = undefined;
   
-      this.pageLimit = 150;
       this.detailedSearch = false;
       this.noAuto = false;
       this.isSearch = false;
       this.draggableEnabled = false;
-      this.compatibility = false;
       this.selectable = false;
-      this.listActions = false;
     }
-    
 
     connectedCallback() {
       super.connectedCallback();
@@ -385,7 +304,7 @@ const mxFunction = base => {
       if (this.isSearch) {
         return;
       }
-      if (this[makingQueryValue]) {
+      if (this[makingQueryValue] || this[queryingProperty]) {
         return;
       }
       this[makingQueryValue] = true;
@@ -439,7 +358,7 @@ const mxFunction = base => {
      * @param {ARCRequestDeletedEvent} e
      */
     [requestDeletedHandler](e) {
-      const { requests=[] } = this;
+      const { requests } = this;
       if (!Array.isArray(requests) || !requests.length) {
         return;
       }
@@ -595,44 +514,6 @@ const mxFunction = base => {
       return 'saved';
     }
 
-    /**
-     * Updates icon size CSS variable and notifies resize on the list when
-     * list type changes.
-     * 
-     * @param {string} type
-     */
-    [updateListStyles](type) {
-      let size;
-      switch (type) {
-        case 'comfortable':
-          size = 48;
-          break;
-        case 'compact':
-          size = 36;
-          break;
-        default:
-          size = 72;
-          break;
-      }
-      this[applyListStyles](size);
-    }
-    
-    /**
-     * Applies `--anypoint-item-icon-width` CSS variable.
-     * 
-     * @param {number} size Icon width in pixels.
-     * @param {HTMLElement=} target The target to apply styling. Default to this.
-     */
-    [applyListStyles](size, target=this) {
-      const value = `${size}px`;
-      target.style.setProperty('--anypoint-item-icon-width', value);
-      // @ts-ignore
-      if (typeof target.notifyResize === 'function') {
-        // @ts-ignore
-        target.notifyResize();
-      }
-    }
-    
     /**
      * Stores current order of requests in the project.
      * 

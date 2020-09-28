@@ -2,12 +2,15 @@
   "cSpell.words": [
     "Mixin's",
     "dataimported",
+    "describedby",
     "draggable",
+    "labelledby",
     "listtype",
     "noautoprojects",
     "projectlist",
     "projectschange",
     "queryingchange",
+    "restapis",
     "undelete"
   ]
 }

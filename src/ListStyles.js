@@ -68,7 +68,8 @@ http-method-label.with-margin {
   margin-right: 12px;
 }
 
-.request-list-item {
+.request-list-item,
+anypoint-item {
   user-select: none;
 }
 
@@ -98,11 +99,13 @@ http-method-label.with-margin {
   font-size: 11px;
 }
 
-:host([listtype="comfortable"]) .request-list-item {
+:host([listtype="comfortable"]) .request-list-item,
+:host([listtype="comfortable"]) .list anypoint-item {
   min-height: var(--request-list-item-comfortable-min-height, 52px);
 }
 
-:host([listtype="compact"]) .request-list-item {
+:host([listtype="compact"]) .request-list-item,
+:host([listtype="compact"]) .list anypoint-item {
   min-height: var(--request-list-item-comfortable-compact-height, 36px);
 }
 

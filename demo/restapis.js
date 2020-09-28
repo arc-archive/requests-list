@@ -3,55 +3,53 @@ import { html } from 'lit-html';
 import { DemoPage } from '@advanced-rest-client/arc-demo-helper';
 import { DataGenerator } from '@advanced-rest-client/arc-data-generator';
 import '@advanced-rest-client/arc-demo-helper/arc-interactive-demo.js';
-import '@advanced-rest-client/arc-models/request-model.js';
-import '@advanced-rest-client/arc-models/url-indexer.js';
+import '@advanced-rest-client/arc-models/rest-api-model.js';
 import '@anypoint-web-components/anypoint-button/anypoint-button.js';
 import '@anypoint-web-components/anypoint-checkbox/anypoint-checkbox.js';
 import '@anypoint-web-components/anypoint-radio-button/anypoint-radio-button.js';
 import '@anypoint-web-components/anypoint-radio-button/anypoint-radio-group.js';
-import { ImportEvents } from '@advanced-rest-client/arc-events';
+import { ImportEvents, ArcNavigationEventTypes } from '@advanced-rest-client/arc-events';
 import { ArcModelEvents } from '@advanced-rest-client/arc-models';
-import './history-screen.js';
+import './restapis-screen.js';
+
+/** @typedef {import('@advanced-rest-client/arc-events').ARCRestApiNavigationEvent} ARCRestApiNavigationEvent */
 
 class ComponentPage extends DemoPage {
   constructor() {
     super();
     this.initObservableProperties([
-      'listActions', 'selectable', 'listType',
+      'listActions', 'listType',
     ]);
-    this.componentName = 'History list';
+    this.componentName = 'REST APIs list';
     this.generator = new DataGenerator();
     this.compatibility = false;
     this.listActions = false;
-    this.selectable = false;
     this.listType = 'default';
 
     this.generateRequests = this.generateRequests.bind(this);
-    this.listItemDetailHandler = this.listItemDetailHandler.bind(this);
-    this.navigateItemDetailHandler = this.navigateItemDetailHandler.bind(this);
-    this.listTypeHandler = this.listTypeHandler.bind(this);
-    this.selectHandler = this.selectHandler.bind(this);
     this.deleteData = this.deleteData.bind(this);
+    this.listTypeHandler = this.listTypeHandler.bind(this);
+
+    window.addEventListener(ArcNavigationEventTypes.navigateRestApi, this.navigateItemDetailHandler.bind(this));
   }
 
   async generateRequests() {
-    await this.generator.insertHistoryRequestData({
-      requestsSize: 100,
+    await this.generator.insertApiData({
+      size: 100
     });
     ImportEvents.dataimported(document.body);
   }
 
   async deleteData() {
-    await this.generator.destroyHistoryData();
+    await this.generator.destroyAllApiData();
     ArcModelEvents.destroyed(document.body, 'all');
   }
 
-  listItemDetailHandler(e) {
-    console.log('Details requested', e.detail);
-  }
-
+  /**
+   * @param {ARCRestApiNavigationEvent} e
+   */
   navigateItemDetailHandler(e) {
-    console.log('Navigate requested', e.requestId, e.requestType, e.route);
+    console.log('Navigate requested', 'Version', e.version, 'id', e.api, 'Action', e.action);
   }
 
   listTypeHandler(e) {
@@ -62,17 +60,12 @@ class ComponentPage extends DemoPage {
     this.listType = name;
   }
 
-  selectHandler(e) {
-    console.log(e.target.selectedItems);
-  }
-
   _demoTemplate() {
     const {
       demoStates,
       darkThemeActive,
       compatibility,
       listActions,
-      selectable,
       listType,
     } = this;
     return html`
@@ -83,19 +76,15 @@ class ComponentPage extends DemoPage {
       </p>
       <arc-interactive-demo
         .states="${demoStates}"
-        @state-chanegd="${this._demoStateHandler}"
+        @state-changed="${this._demoStateHandler}"
         ?dark="${darkThemeActive}"
       >
-        <history-screen 
+        <restapis-screen 
           slot="content"
           ?listActions="${listActions}"
-          ?selectable="${selectable}"
           ?compatibility="${compatibility}"
           .listType="${listType}"
-          @details="${this.listItemDetailHandler}"
-          @arcnavigaterequest="${this.navigateItemDetailHandler}"
-          @select="${this.selectHandler}"
-        ></history-screen>
+        ></restapis-screen>
 
         <label slot="options" id="mainOptionsLabel">Options</label>
         <anypoint-checkbox
@@ -104,12 +93,6 @@ class ComponentPage extends DemoPage {
           name="listActions"
           @change="${this._toggleMainOption}"
         >Add actions</anypoint-checkbox>
-        <anypoint-checkbox
-          aria-describedby="mainOptionsLabel"
-          slot="options"
-          name="selectable"
-          @change="${this._toggleMainOption}"
-        >Add selection</anypoint-checkbox>
 
         <label slot="options" id="listTypeLabel">List type</label>
         <anypoint-radio-group
@@ -153,9 +136,8 @@ class ComponentPage extends DemoPage {
 
   contentTemplate() {
     return html`
-      <request-model></request-model>
-      <url-indexer></url-indexer>
-      <h2>History list</h2>
+      <rest-api-model></rest-api-model>
+      <h2>REST APIs list</h2>
       ${this._demoTemplate()}
       ${this._controlsTemplate()}
     `;

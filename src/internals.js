@@ -100,3 +100,13 @@ export const dropHandler = Symbol('dropHandler');
 export const hasDraggableEventsValue = Symbol('hasDraggableEventsValue');
 export const isValidDragTarget = Symbol('isValidDragTarget');
 export const dropTargetTemplate = Symbol('dropTargetTemplate');
+
+export const indexUpdatedHandler = Symbol('indexUpdatedHandler');
+export const indexDeletedHandler = Symbol('indexDeletedHandler');
+export const queryTimeoutValue = Symbol('queryTimeoutValue');
+export const openHandler = Symbol('openHandler');
+export const apiItemTemplate = Symbol('apiItemTemplate');
+export const itemActionsTemplate = Symbol('itemActionsTemplate');
+export const itemBodyTemplate = Symbol('itemBodyTemplate');
+export const restApiDeleteHandler = Symbol('restApiDeleteHandler');
+export const noMoreItemsValue = Symbol('noMoreItemsValue');

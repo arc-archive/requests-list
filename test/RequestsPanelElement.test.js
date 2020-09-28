@@ -3,6 +3,8 @@ import { DataGenerator } from '@advanced-rest-client/arc-data-generator';
 import { ArcModelEventTypes } from '@advanced-rest-client/arc-models';
 import { DataExportEventTypes } from '@advanced-rest-client/arc-events';
 import sinon from 'sinon';
+import '@advanced-rest-client/arc-models/project-model.js';
+import '@advanced-rest-client/arc-models/request-model.js';
 import '../saved-panel.js'
 import { internals } from '../index.js';
 

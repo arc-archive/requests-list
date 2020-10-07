@@ -248,12 +248,14 @@ describe('HistoryListMixin', () => {
     });
 
     it('does nothing when no requests', () => {
+      // @ts-ignore
       element[internals.requestDeletedHandler]({});
       assert.isUndefined(element.requests);
     });
 
     it('does nothing when empty requests', () => {
       element.requests = [];
+      // @ts-ignore
       element[internals.requestDeletedHandler]({});
       assert.deepEqual(element.requests, []);
     });

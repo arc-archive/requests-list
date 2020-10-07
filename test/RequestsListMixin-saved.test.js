@@ -421,14 +421,22 @@ describe('RequestsListMixin (saved)', () => {
 
     it('reads project data when project is not set', async () => {
       const result = await element[internals.readProjectRequests](project._id);
-      assert.deepEqual(result, requests);
+      assert.deepEqual(result, requests.map((r) => { 
+        const copy = {...r}; 
+        delete copy.payload; 
+        return copy; 
+      }));
       assert.deepEqual(element.project, project);
     });
 
     it('reads project data when project is set', async () => {
       element.project = project;
       const result = await element[internals.readProjectRequests](project._id);
-      assert.deepEqual(result, requests);
+      assert.deepEqual(result, requests.map((r) => { 
+        const copy = {...r}; 
+        delete copy.payload; 
+        return copy; 
+      }));
     });
   });
 

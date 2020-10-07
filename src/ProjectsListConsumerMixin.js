@@ -34,8 +34,8 @@ import {
 } from './internals.js';
 import { projectsSortFn } from './Utils.js';
 
-/** @typedef {import('@advanced-rest-client/arc-models').ARCSavedRequest} ARCSavedRequest */
-/** @typedef {import('@advanced-rest-client/arc-models').ARCProject} ARCProject */
+/** @typedef {import('@advanced-rest-client/arc-types').Project.ARCProject} ARCProject */
+/** @typedef {import('@advanced-rest-client/arc-types').ArcRequest.ARCSavedRequest} ARCSavedRequest */
 /** @typedef {import('@advanced-rest-client/arc-models').ARCModelStateDeleteEvent} ARCModelStateDeleteEvent */
 /** @typedef {import('@advanced-rest-client/arc-models').ARCProjectUpdatedEvent} ARCProjectUpdatedEvent */
 /** @typedef {import('@advanced-rest-client/arc-models').ARCProjectDeletedEvent} ARCProjectDeletedEvent */
@@ -87,7 +87,7 @@ const mxFunction = base => {
       super.connectedCallback();
       window.addEventListener(ArcModelEventTypes.Project.State.update, this[projectChangeHandler]);
       window.addEventListener(ArcModelEventTypes.Project.State.delete, this[projectDeleteHandler]);
-      window.addEventListener(DataImportEventTypes.dataimported, this[dataImportHandler]);
+      window.addEventListener(DataImportEventTypes.dataImported, this[dataImportHandler]);
       window.addEventListener(ArcModelEventTypes.destroyed, this[dataDestroyHandler]);
       if (!this.noAutoProjects && !this.projects) {
         this.refreshProjects();
@@ -98,7 +98,7 @@ const mxFunction = base => {
       super.disconnectedCallback();
       window.removeEventListener(ArcModelEventTypes.Project.State.update, this[projectChangeHandler]);
       window.removeEventListener(ArcModelEventTypes.Project.State.delete, this[projectDeleteHandler]);
-      window.removeEventListener(DataImportEventTypes.dataimported, this[dataImportHandler]);
+      window.removeEventListener(DataImportEventTypes.dataImported, this[dataImportHandler]);
       window.removeEventListener(ArcModelEventTypes.destroyed, this[dataDestroyHandler]);
     }
 
@@ -264,7 +264,7 @@ const mxFunction = base => {
     [computeProjectSelection](selected) {
       const result = {
         add: [],
-        existing: []
+        existing: [],
       };
       if (!Array.isArray(selected) || !selected.length) {
         return result;

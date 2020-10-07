@@ -1,5 +1,5 @@
-/** @typedef {import('@advanced-rest-client/arc-models').ARCSavedRequest} ARCSavedRequest */
-/** @typedef {import('@advanced-rest-client/arc-models').ARCProject} ARCProject */
+/** @typedef {import('@advanced-rest-client/arc-types').ArcRequest.ARCSavedRequest} ARCSavedRequest */
+/** @typedef {import('@advanced-rest-client/arc-types').Project.ARCProject} ARCProject */
 
 /**
  * Sort function used to sort projects in order.

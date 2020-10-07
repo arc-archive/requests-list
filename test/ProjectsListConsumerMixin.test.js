@@ -68,7 +68,7 @@ describe('ProjectsListConsumerMixin', () => {
     it('Calls refreshProjects() when import event is dispatched', async () => {
       let called = false;
       element.refreshProjects = async () => { called = true };
-      ImportEvents.dataimported(document.body);
+      ImportEvents.dataImported(document.body);
       await aTimeout(0);
       assert.isTrue(called);
     });

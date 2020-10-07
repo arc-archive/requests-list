@@ -360,7 +360,7 @@ describe('RequestsListMixin (history)', () => {
 
     it('calls refresh() when type matches', async () => {
       const spy = sinon.spy(element, 'refresh');
-      ImportEvents.dataimported(document.body);
+      ImportEvents.dataImported(document.body);
       await oneEvent(element, 'queryingchange');
       await oneEvent(element, 'queryingchange');
       assert.isTrue(spy.called);

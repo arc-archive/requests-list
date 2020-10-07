@@ -43,7 +43,7 @@ import {
 import { savedSort, computeA11yCommand } from './Utils.js';
 import { RequestsListMixin } from './RequestsListMixin.js';
 
-/** @typedef {import('@advanced-rest-client/arc-models').ARCSavedRequest} ARCSavedRequest */
+/** @typedef {import('@advanced-rest-client/arc-types').ArcRequest.ARCSavedRequest} ARCSavedRequest */
 /** @typedef {import('lit-element').TemplateResult} TemplateResult */
 
 /**

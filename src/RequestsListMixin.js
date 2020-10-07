@@ -260,7 +260,7 @@ const mxFunction = base => {
       window.addEventListener(ArcModelEventTypes.Request.State.delete, this[requestDeletedHandler]);
       window.addEventListener(ArcModelEventTypes.Request.State.update, this[requestChangedHandler]);
       window.addEventListener(ArcModelEventTypes.Project.State.update, this[projectChangeHandler]);
-      window.addEventListener(DataImportEventTypes.dataimported, this[dataImportHandler]);
+      window.addEventListener(DataImportEventTypes.dataImported, this[dataImportHandler]);
       window.addEventListener(ArcModelEventTypes.destroyed, this[dataDestroyHandler]);
       if (!this.noAuto && !this.querying && !this.requests) {
         this.loadNext();
@@ -272,7 +272,7 @@ const mxFunction = base => {
       window.removeEventListener(ArcModelEventTypes.Request.State.delete, this[requestDeletedHandler]);
       window.removeEventListener(ArcModelEventTypes.Request.State.update, this[requestChangedHandler]);
       window.removeEventListener(ArcModelEventTypes.Project.State.update, this[projectChangeHandler]);
-      window.removeEventListener(DataImportEventTypes.dataimported, this[dataImportHandler]);
+      window.removeEventListener(DataImportEventTypes.dataImported, this[dataImportHandler]);
       window.removeEventListener(ArcModelEventTypes.destroyed, this[dataDestroyHandler]);
     }
 
@@ -494,7 +494,7 @@ const mxFunction = base => {
         this.project = project;
       }
       const requests = /** @type ARCSavedRequest[] */ (await ArcModelEvents.Request.projectlist(this, project._id, {
-        restorePayload: false,
+        ignorePayload: true,
       }));
       if (!project.requests && requests) {
         requests.sort(projectLegacySort);

@@ -1,9 +1,9 @@
 import { 
-  ARCRestApiIndex,
   ARCRestApiUpdatedEvent,
   ARCRestApiDeletedEvent,
   ARCModelStateDeleteEvent,
 } from '@advanced-rest-client/arc-models';
+import { RestApi } from '@advanced-rest-client/arc-types'
 import { TemplateResult } from 'lit-html';
 import { ListMixin, ListMixinConstructor } from './ListMixin';
 import {
@@ -42,7 +42,7 @@ declare interface RestApiListMixin extends ListMixin {
    * The list of request to render.
    * It can be either saved, history or project items.
    */
-  items: ARCRestApiIndex[];
+  items: RestApi.ARCRestApiIndex[];
   /**
    * When set it won't query for data automatically when attached to the DOM.
    * @attribute
@@ -146,9 +146,9 @@ declare interface RestApiListMixin extends ListMixin {
    */
   [listTemplate](): string|TemplateResult;
 
-  [apiItemTemplate](api: ARCRestApiIndex, index: number): TemplateResult;
+  [apiItemTemplate](api: RestApi.ARCRestApiIndex, index: number): TemplateResult;
   
-  [itemBodyTemplate](api: ARCRestApiIndex): TemplateResult;
+  [itemBodyTemplate](api: RestApi.ARCRestApiIndex): TemplateResult;
 
   /**
    * @param id The id of the API index entity

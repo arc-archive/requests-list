@@ -47,7 +47,7 @@ import {
 /** @typedef {import('@advanced-rest-client/arc-models').ARCModelStateDeleteEvent} ARCModelStateDeleteEvent */
 /** @typedef {import('@advanced-rest-client/arc-models').ARCRestApiDeletedEvent} ARCRestApiDeletedEvent */
 /** @typedef {import('@advanced-rest-client/arc-models').ARCRestApiUpdatedEvent} ARCRestApiUpdatedEvent */
-/** @typedef {import('@advanced-rest-client/arc-models').ARCRestApiIndex} ARCRestApiIndex */
+/** @typedef {import('@advanced-rest-client/arc-types').RestApi.ARCRestApiIndex} ARCRestApiIndex */
 /** @typedef {import('lit-element').TemplateResult} TemplateResult */
 
 // /**
@@ -118,7 +118,7 @@ const mxFunction = base => {
   
     connectedCallback() {
       super.connectedCallback();
-      window.addEventListener(DataImportEventTypes.dataimported, this[dataImportHandler]);
+      window.addEventListener(DataImportEventTypes.dataImported, this[dataImportHandler]);
       window.addEventListener(ArcModelEventTypes.destroyed, this[dataDestroyHandler]);
       window.addEventListener(ArcModelEventTypes.RestApi.State.update, this[indexUpdatedHandler]);
       window.addEventListener(ArcModelEventTypes.RestApi.State.delete, this[indexDeletedHandler]);
@@ -134,7 +134,7 @@ const mxFunction = base => {
         clearTimeout(this[queryTimeoutValue]);
         this[queryTimeoutValue] = undefined;
       }
-      window.removeEventListener(DataImportEventTypes.dataimported, this[dataImportHandler]);
+      window.removeEventListener(DataImportEventTypes.dataImported, this[dataImportHandler]);
       window.removeEventListener(ArcModelEventTypes.destroyed, this[dataDestroyHandler]);
       window.removeEventListener(ArcModelEventTypes.RestApi.State.update, this[indexUpdatedHandler]);
       window.removeEventListener(ArcModelEventTypes.RestApi.State.delete, this[indexDeletedHandler]);

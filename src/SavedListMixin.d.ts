@@ -1,4 +1,4 @@
-import { ARCSavedRequest } from '@advanced-rest-client/arc-models';
+import { ArcRequest } from '@advanced-rest-client/arc-types';
 import { TemplateResult } from 'lit-element';
 import {
   appendItems,
@@ -28,7 +28,7 @@ declare interface SavedListMixinConstructor {
 }
 
 declare interface SavedListMixin extends RequestsListMixin {
-  requests: ARCSavedRequest[];
+  requests: ArcRequest.ARCSavedRequest[];
   [draggableEnabledValue]: boolean;
 
   connectedCallback(): void;
@@ -73,7 +73,7 @@ declare interface SavedListMixin extends RequestsListMixin {
   /**
    * Appends a list of requests to the history list.
    */
-  [appendItems](requests: ARCSavedRequest[]): Promise<void>;
+  [appendItems](requests: ArcRequest.ARCSavedRequest[]): Promise<void>;
 
   /**
    * @returns Template for the list items.
@@ -85,13 +85,13 @@ declare interface SavedListMixin extends RequestsListMixin {
    * @param index Index of the history group
    * @returns Template for a single request object
    */
-  [requestItemTemplate](request: ARCSavedRequest, index: number): TemplateResult;
+  [requestItemTemplate](request: ArcRequest.ARCSavedRequest, index: number): TemplateResult;
 
   /**
    * @param {ARCSavedRequest} request The request to render
    * @returns {TemplateResult} Template for a request's content
    */
-  [requestItemBodyTemplate](request: ARCSavedRequest): TemplateResult;
+  [requestItemBodyTemplate](request: ArcRequest.ARCSavedRequest): TemplateResult;
 
   [unavailableTemplate](): string|TemplateResult;
 }

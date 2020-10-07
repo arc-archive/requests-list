@@ -1,7 +1,7 @@
 import { HistoryListMixin } from './HistoryListMixin';
 import { RequestsPanelElement } from './RequestsPanelElement';
 import { requestChanged } from './internals';
-import { ARCHistoryRequest } from '@advanced-rest-client/arc-models';
+import { ArcRequest } from '@advanced-rest-client/arc-types';
 import { HistoryGroup } from './types';
 
 export declare class HistoryPanelElement {
@@ -20,5 +20,5 @@ export declare interface HistoryPanelElement extends HistoryListMixin, RequestsP
    * 
    * @param request Changed request object.
    */
-  [requestChanged](request: ARCHistoryRequest): void;
+  [requestChanged](request: ArcRequest.ARCHistoryRequest): void;
 }

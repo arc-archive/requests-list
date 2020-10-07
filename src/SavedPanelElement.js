@@ -24,7 +24,7 @@ export const cancelAddProject = Symbol('cancelAddProject');
 export const projectSelectorOpenedValue = Symbol('projectSelectorOpenedValue');
 export const projectOverlayClosed = Symbol('projectOverlayClosed');
 
-/** @typedef {import('@advanced-rest-client/arc-models').ARCSavedRequest} ARCSavedRequest */
+/** @typedef {import('@advanced-rest-client/arc-types').ArcRequest.ARCSavedRequest} ARCSavedRequest */
 /** @typedef {import('@anypoint-web-components/anypoint-chip-input/src/AnypointChipInput').ChipSuggestion} ChipSuggestion */
 /** @typedef {import('@anypoint-web-components/anypoint-chip-input').AnypointChipInput} AnypointChipInput */
 

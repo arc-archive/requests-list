@@ -16,7 +16,7 @@ import { internals } from '../index.js';
 /** @typedef {import('../').RestApisPanelElement} RestApisPanelElement */
 /** @typedef {import('lit-html').TemplateResult} TemplateResult */
 
-describe('RequestsPanelElement', () => {
+describe('RestApisPanelElement', () => {
   const generator = new DataGenerator();
 
   /**
@@ -375,13 +375,13 @@ describe('RequestsPanelElement', () => {
 
     it('Calls reset()', async () => {
       const spy = sinon.spy(element, 'reset');
-      ImportEvents.dataimported(document.body);
+      ImportEvents.dataImported(document.body);
       assert.isTrue(spy.called);
     });
 
     it('Calls refresh()', async () => {
       const spy = sinon.spy(element, 'refresh');
-      ImportEvents.dataimported(document.body);
+      ImportEvents.dataImported(document.body);
       assert.isTrue(spy.called);
     });
   });

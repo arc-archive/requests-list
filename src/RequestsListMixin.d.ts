@@ -1,13 +1,11 @@
 import { 
-  ARCSavedRequest, 
-  ARCHistoryRequest, 
-  ARCProject, 
   ARCRequestDeletedEvent,
   ARCRequestUpdatedEvent,
   ARCEntityChangeRecord,
   ARCProjectUpdatedEvent,
   ARCModelStateDeleteEvent,
 } from '@advanced-rest-client/arc-models';
+import { Project, ArcRequest } from '@advanced-rest-client/arc-types'
 import { TemplateResult } from 'lit-html';
 import { ListMixin, ListMixinConstructor } from './ListMixin';
 import {
@@ -87,7 +85,7 @@ declare interface RequestsListMixin extends ListMixin {
    * This is only valid when `type` is set to `project`. It is set automatically
    * when `readProjectRequests()` is called.
    */
-  project?: ARCProject;
+  project?: Project.ARCProject;
   /**
    * When set this component is in search mode.
    * This means that the list won't be loaded automatically and
@@ -200,13 +198,13 @@ declare interface RequestsListMixin extends ListMixin {
    * Handles request change when type is project.
    * @param request Changed request object.
    */
-  [projectRequestChanged](request: ARCSavedRequest): void;
+  [projectRequestChanged](request: ArcRequest.ARCSavedRequest): void;
 
   /**
    * Handles request change when type is project.
    * @param request Changed request object.
    */
-  [requestChanged](request: ARCSavedRequest|ARCHistoryRequest): void;
+  [requestChanged](request: ArcRequest.ARCSavedRequest|ArcRequest.ARCHistoryRequest): void;
 
   /**
    * A function to read request data for a project.
@@ -214,7 +212,7 @@ declare interface RequestsListMixin extends ListMixin {
    * @param id Project ID
    * @returns Promise resolved to the list of project requests.
    */
-  [readProjectRequests](id: string): Promise<ARCSavedRequest[]>;
+  [readProjectRequests](id: string): Promise<ArcRequest.ARCSavedRequest[]>;
 
   /**
    * @returns The type used in the ARC request model.
@@ -226,7 +224,7 @@ declare interface RequestsListMixin extends ListMixin {
    * 
    * @return Change record or undefined when it has the same order
    */
-  [persistRequestsOrder](): Promise<ARCEntityChangeRecord<ARCProject>|undefined>;
+  [persistRequestsOrder](): Promise<ARCEntityChangeRecord<Project.ARCProject>|undefined>;
 
   /**
    * Handler for the project change event.
@@ -243,7 +241,7 @@ declare interface RequestsListMixin extends ListMixin {
    * @param {ARCProject} project Changed project
    * @return {Boolean} True when order has changed
    */
-  [updateProjectOrder](project: ARCProject): boolean;
+  [updateProjectOrder](project: Project.ARCProject): boolean;
 
   /**
    * Dispatches navigate event to open a request

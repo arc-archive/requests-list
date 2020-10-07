@@ -34,11 +34,6 @@ import {
 } from './internals.js';
 import { DataExport } from '@advanced-rest-client/arc-types'
 
-/** @typedef {import('@advanced-rest-client/arc-ie').ExportOptionsElement} ExportOptionsElement */
-/** @typedef {import('@advanced-rest-client/arc-types').DataExport.ProviderOptions} ProviderOptions */
-/** @typedef {import('@advanced-rest-client/arc-types').DataExport.ExportOptions} ExportOptions */
-/** @typedef {import('lit-element').TemplateResult} TemplateResult */
-
 export declare interface RequestsPanelElement extends RequestsListMixin, LitElement {
 }
 

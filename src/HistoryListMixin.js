@@ -44,8 +44,8 @@ import { midnightTimestamp } from './Utils.js';
 import { RequestsListMixin } from './RequestsListMixin.js';
 
 /** @typedef {import('@advanced-rest-client/arc-models').ARCRequestDeletedEvent} ARCRequestDeletedEvent */
-/** @typedef {import('@advanced-rest-client/arc-models').ARCHistoryRequest} ARCHistoryRequest */
 /** @typedef {import('@advanced-rest-client/arc-models').ARCModelStateDeleteEvent} ARCModelStateDeleteEvent */
+/** @typedef {import('@advanced-rest-client/arc-types').ArcRequest.ARCHistoryRequest} ARCHistoryRequest */
 /** @typedef {import('lit-element').TemplateResult} TemplateResult */
 /** @typedef {import('./types').HistoryListItem} HistoryListItem */
 /** @typedef {import('./types').HistoryGroup} HistoryGroup */

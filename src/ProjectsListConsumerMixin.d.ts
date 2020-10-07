@@ -1,4 +1,5 @@
-import { ARCProject, ARCModelStateDeleteEvent, ARCProjectDeletedEvent, ARCProjectUpdatedEvent } from '@advanced-rest-client/arc-models';
+import { ARCModelStateDeleteEvent, ARCProjectDeletedEvent, ARCProjectUpdatedEvent } from '@advanced-rest-client/arc-models';
+import { Project } from '@advanced-rest-client/arc-types';
 import { Suggestion } from '@anypoint-web-components/anypoint-autocomplete';
 import { 
   hasProjectsValue,
@@ -52,8 +53,8 @@ declare interface ProjectsListConsumerMixin {
   /**
    * A list of available projects.
    */
-  readonly projects: ARCProject[]|undefined;
-  [projectsValue]: ARCProject[]|undefined;
+  readonly projects: Project.ARCProject[]|undefined;
+  [projectsValue]: Project.ARCProject[]|undefined;
   [makingProjectsQueryValue]: boolean;
 
   connectedCallback(): void;
@@ -72,7 +73,7 @@ declare interface ProjectsListConsumerMixin {
   /**
    * Sets the projects value.
    */
-  [setProjects](projects: ARCProject[]): void;
+  [setProjects](projects: Project.ARCProject[]): void;
 
   /**
    * Handler for `data-imported` custom event.
@@ -102,7 +103,7 @@ declare interface ProjectsListConsumerMixin {
    * @param projects
    * @returns AnypointSuggestion element input
    */
-  [computeProjectsAutocomplete](projects: ARCProject[]): Suggestion[]|undefined;
+  [computeProjectsAutocomplete](projects: Project.ARCProject[]): Suggestion[]|undefined;
 
   /**
    * Processes projects name list and returns object with `add` property as a list of project 

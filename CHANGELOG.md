@@ -67,3 +67,23 @@
 * adding dependencies to the test page [87734fd](https://github.com/advanced-rest-client/requests-list/commit/87734fd69dc963fdd843830f975c305fc2356c63) by Pawel
 
 
+<a name="0.1.6"></a>
+## [0.1.6](https://github.com/advanced-rest-client/requests-list/compare/0.1.3...0.1.6) (2020-10-07)
+
+### Update
+
+* [ci skip] automated merge master->stage. syncing main branches [95a56d7](https://github.com/advanced-rest-client/requests-list/commit/95a56d705507d605d1ab1d1cbf9aa6742671dbfd) by Ci agent
+* updating events, types, and models [0c08000](https://github.com/advanced-rest-client/requests-list/commit/0c08000cdf93e200064bdd5bb45eca19053f085e) by Pawel
+* [ci skip] automated merge master->stage. syncing main branches [228b617](https://github.com/advanced-rest-client/requests-list/commit/228b6171e9c337d92d8563efe7ff9150ae0d9b70) by Ci agent
+
+
+### Features
+
+* adding rest apis [cf7c93a](https://github.com/advanced-rest-client/requests-list/commit/cf7c93af369616a3675aea39869b59509e7263d7) by Pawel
+
+
+### Testing
+
+* adding dependencies to the test page [87734fd](https://github.com/advanced-rest-client/requests-list/commit/87734fd69dc963fdd843830f975c305fc2356c63) by Pawel
+
+

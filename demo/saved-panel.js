@@ -55,7 +55,7 @@ class ComponentPage extends DemoPage {
     await this.generator.insertSavedRequestData({
       requestsSize: 100,
     });
-    ImportEvents.dataimported(document.body);
+    ImportEvents.dataImported(document.body);
   }
 
   listItemDetailHandler(e) {
@@ -158,7 +158,7 @@ ${JSON.stringify(request, null, 2)}
       </p>
       <arc-interactive-demo
         .states="${demoStates}"
-        @state-chanegd="${this._demoStateHandler}"
+        @state-changed="${this._demoStateHandler}"
         ?dark="${darkThemeActive}"
       >
         <div class="panels-container" slot="content">

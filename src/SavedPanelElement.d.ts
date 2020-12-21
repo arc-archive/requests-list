@@ -14,13 +14,13 @@ export const cancelAddProject: unique symbol;
 export const projectSelectorOpenedValue: unique symbol;
 export const projectOverlayClosed: unique symbol;
 
-
-export declare interface SavedPanelElement extends ProjectsListConsumerMixin, SavedListMixin, RequestsPanelElement {
+/**
+ * @fires details When the request details were requested
+ * @fires select When selection change
+ */
+export declare class SavedPanelElement extends ProjectsListConsumerMixin(SavedListMixin(RequestsPanelElement)) {
   requests: ArcRequest.ARCSavedRequest[];
-  [projectChangeHandler](e: ARCProjectUpdatedEvent): Promise<void>;
-}
-
-export declare class SavedPanelElement {
+  
   [notifyProject](): Promise<void>;
 
   [contentActionHandler](e: PointerEvent): void;
@@ -44,4 +44,6 @@ export declare class SavedPanelElement {
   [customActionsTemplate](): TemplateResult;
 
   [projectSelectorTemplate](): TemplateResult;
+
+  [projectChangeHandler](e: ARCProjectUpdatedEvent): Promise<void>;
 }

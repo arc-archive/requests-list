@@ -34,10 +34,7 @@ import {
 } from './internals.js';
 import { DataExport } from '@advanced-rest-client/arc-types'
 
-export declare interface RequestsPanelElement extends RequestsListMixin, LitElement {
-}
-
-export declare class RequestsPanelElement {
+export declare class RequestsPanelElement extends RequestsListMixin(LitElement) {
   static readonly styles: CSSResult[];
 
   constructor();

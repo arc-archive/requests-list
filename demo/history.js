@@ -38,7 +38,7 @@ class ComponentPage extends DemoPage {
     await this.generator.insertHistoryRequestData({
       requestsSize: 100,
     });
-    ImportEvents.dataimported(document.body);
+    ImportEvents.dataImported(document.body);
   }
 
   async deleteData() {
@@ -83,7 +83,7 @@ class ComponentPage extends DemoPage {
       </p>
       <arc-interactive-demo
         .states="${demoStates}"
-        @state-chanegd="${this._demoStateHandler}"
+        @state-changed="${this._demoStateHandler}"
         ?dark="${darkThemeActive}"
       >
         <history-screen 

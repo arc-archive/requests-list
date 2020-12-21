@@ -1,3 +1,4 @@
+/* eslint-disable arrow-body-style */
 /* eslint-disable no-param-reassign */
 import { html } from 'lit-element';
 import '@advanced-rest-client/arc-icons/arc-icon.js';
@@ -66,7 +67,7 @@ export class SavedPanelElement extends ProjectsListConsumerMixin(SavedListMixin(
    * Updates projects for requests when confirming the change action.
    */
   async [addSelectedProject]() {
-    const chip = /** @type AnypointChipInput */ this.shadowRoot.querySelector('[name="projects"]');
+    const chip = /** @type AnypointChipInput */ (this.shadowRoot.querySelector('[name="projects"]'));
     const { chipsValue } = chip;
     const selected = /** @type string[] */(this[selectedItemsValue]);
     if (!chipsValue || !chipsValue.length || !selected || !selected.length) {
@@ -136,7 +137,7 @@ export class SavedPanelElement extends ProjectsListConsumerMixin(SavedListMixin(
     return html`
     <bottom-sheet
       ?opened="${opened}"
-      @overlay-closed="${this[projectOverlayClosed]}"
+      @closed="${this[projectOverlayClosed]}"
     >
       <h3 class="project-selector-title">Select project</h3>
       <anypoint-chip-input

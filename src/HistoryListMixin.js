@@ -1,3 +1,6 @@
+/* eslint-disable no-continue */
+/* eslint-disable class-methods-use-this */
+/* eslint-disable no-plusplus */
 /**
 @license
 Copyright 2018 The Advanced REST client authors <arc@mulesoft.com>

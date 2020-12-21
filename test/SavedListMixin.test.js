@@ -2,6 +2,8 @@ import { fixture, assert, html, oneEvent, nextFrame } from '@open-wc/testing';
 import { DataGenerator } from '@advanced-rest-client/arc-data-generator';
 import { ArcModelEvents, ArcModelEventTypes } from '@advanced-rest-client/arc-models';
 import sinon from 'sinon';
+import '@advanced-rest-client/arc-models/request-model.js';
+import '@advanced-rest-client/arc-models/project-model.js';
 import '../saved-panel.js'
 import '../history-panel.js'
 import { internals } from '../index.js';

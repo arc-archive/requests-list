@@ -1,4 +1,4 @@
-import { HistoryPanelElement } from './src/HistoryPanelElement.js';
+import { HistoryPanelElement } from './src/HistoryPanelElement';
 declare global {
   interface HTMLElementTagNameMap {
     "history-panel": HistoryPanelElement;

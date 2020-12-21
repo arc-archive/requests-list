@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 import { LitElement, html } from 'lit-element';
 import '@advanced-rest-client/arc-icons/arc-icon.js';
 import '@anypoint-web-components/anypoint-input/anypoint-input.js';
@@ -229,6 +230,9 @@ export class RequestsPanelElement extends RequestsListMixin(LitElement) {
       eo.kind = this[exportKindValue];
     }
     const result = await ExportEvents.nativeData(this, data, eo, providerOptions);
+    if (!result) {
+      return;
+    }
     if (!result.interrupted && exportOptions.provider === 'drive') {
       // @ts-ignore
       this.shadowRoot.querySelector('#driveExport').open = true;
@@ -367,7 +371,7 @@ export class RequestsPanelElement extends RequestsListMixin(LitElement) {
       labelText="${cnt} requests were deleted." 
       ?open="${opened}" 
       timeoutMs="8000"
-      @MDCSnackbar:closed="${this[snackbarClosedHandler]}"
+      @closed="${this[snackbarClosedHandler]}"
     >
       <anypoint-button 
         class="snackbar-button" 
@@ -398,7 +402,7 @@ export class RequestsPanelElement extends RequestsListMixin(LitElement) {
     <bottom-sheet
       withBackdrop
       .opened="${opened}"
-      @overlay-closed="${this[exportOverlayClosed]}"
+      @closed="${this[exportOverlayClosed]}"
     >
       <export-options
         ?compatibility="${compatibility}"

@@ -9,6 +9,9 @@ declare interface ListMixinConstructor {
   new(...args: any[]): ListMixin;
 }
 
+/**
+ * @fires queryingchange
+ */
 declare interface ListMixin {
   /**
    * Changes information density of list items.

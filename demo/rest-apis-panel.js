@@ -35,7 +35,7 @@ class ComponentPage extends DemoPage {
     await this.generator.insertApiData({
       size: 100
     });
-    ImportEvents.dataimported(document.body);
+    ImportEvents.dataImported(document.body);
   }
 
   async deleteData() {

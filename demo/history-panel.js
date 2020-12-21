@@ -53,7 +53,7 @@ class ComponentPage extends DemoPage {
     await this.generator.insertHistoryRequestData({
       requestsSize: 100,
     });
-    ImportEvents.dataimported(document.body);
+    ImportEvents.dataImported(document.body);
   }
 
   listItemDetailHandler(e) {
@@ -156,7 +156,7 @@ ${JSON.stringify(request, null, 2)}
       </p>
       <arc-interactive-demo
         .states="${demoStates}"
-        @state-chanegd="${this._demoStateHandler}"
+        @state-changed="${this._demoStateHandler}"
         ?dark="${darkThemeActive}"
       >
         <history-panel 
@@ -220,7 +220,7 @@ ${JSON.stringify(request, null, 2)}
 
     <bottom-sheet
       .opened="${exportSheetOpened}"
-      @opened-changed="${this.exportOpenedChanged}"
+      @opened="${this.exportOpenedChanged}"
     >
       <h3>Export demo</h3>
       <p>This is a preview of the file. Normally export module would save this data to file / Drive.</p>

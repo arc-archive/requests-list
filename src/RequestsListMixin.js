@@ -1,3 +1,5 @@
+/* eslint-disable class-methods-use-this */
+/* eslint-disable no-plusplus */
 /**
 @license
 Copyright 2018 The Advanced REST client authors <arc@mulesoft.com>
@@ -18,7 +20,7 @@ import { LitElement, html } from 'lit-element';
 import {classMap} from 'lit-html/directives/class-map.js';
 import {ifDefined} from 'lit-html/directives/if-defined.js';
 import { ArcModelEventTypes, ArcModelEvents } from '@advanced-rest-client/arc-models';
-import { DataImportEventTypes, ArcNavigationEvents } from '@advanced-rest-client/arc-events';
+import { DataImportEventTypes, ArcNavigationEvents, TelemetryEvents } from '@advanced-rest-client/arc-events';
 import '@advanced-rest-client/arc-icons/arc-icon.js';
 import '@anypoint-web-components/anypoint-button/anypoint-icon-button.js';
 import '@api-components/http-method-label/http-method-label.js';
@@ -341,15 +343,10 @@ const mxFunction = base => {
         this[handleError](e);
       }
       // This helps prioritize search development
-      this.dispatchEvent(new CustomEvent('send-analytics', {
-        bubbles: true,
-        composed: true,
-        detail: {
-          type: 'event',
-          category: 'Content search',
-          action: `${this.type} search`
-        }
-      }));
+      TelemetryEvents.event(this, {
+        category: 'Content search',
+        action: `${this.type} search`
+      });
     }
 
     /**
@@ -622,11 +619,13 @@ const mxFunction = base => {
           nextPageToken: token,
           limit: this.pageLimit,
         });
-        if (response.nextPageToken) {
-          this[pageTokenValue] = response.nextPageToken;
-        }
         this[queryingProperty] = false;
-        this[appendItems](response.items);
+        if (response) {
+          if (response.nextPageToken) {
+            this[pageTokenValue] = response.nextPageToken;
+          }
+          this[appendItems](response.items);
+        }  
       } catch (e) {
         this[queryingProperty] = false;
         this[handleError](e);
@@ -652,15 +651,7 @@ const mxFunction = base => {
      * @param {Error} cause
      */
     [handleError](cause) {
-      this.dispatchEvent(new CustomEvent('send-analytics', {
-        bubbles: true,
-        composed: true,
-        detail: {
-          type: 'exception',
-          description: cause.message,
-          fatal: false
-        }
-      }));
+      TelemetryEvents.exception(this, cause.message, false);
       throw cause;
     }
 

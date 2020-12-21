@@ -1,13 +1,10 @@
 import { LitElement, TemplateResult, CSSResult } from 'lit-element';
 import { RestApiListMixin } from './RestApiListMixin.js';
 
-export declare interface RestApisPanelElement extends RestApiListMixin, LitElement {
-}
-
 /**
  * The rest apis screen for Advanced REST Client
  */
-export declare class RestApisPanelElement {
+export declare class RestApisPanelElement extends RestApiListMixin(LitElement) {
   static readonly styles: CSSResult[];
 
   constructor();

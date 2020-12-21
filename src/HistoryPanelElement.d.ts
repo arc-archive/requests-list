@@ -4,14 +4,15 @@ import { requestChanged } from './internals';
 import { ArcRequest } from '@advanced-rest-client/arc-types';
 import { HistoryGroup } from './types';
 
-export declare class HistoryPanelElement {
+/**
+ * @fires details When the request details were requested
+ * @fires select When selection change
+ */
+export declare class HistoryPanelElement extends HistoryListMixin(RequestsPanelElement) {
   /**
    * Toggles selection of all items on the list.
    */
   toggleSelection(): void;
-}
-
-export declare interface HistoryPanelElement extends HistoryListMixin, RequestsPanelElement {
   requests: HistoryGroup[];
   /**
    * Handles request model change when the type is history.

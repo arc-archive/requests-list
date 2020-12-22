@@ -599,7 +599,7 @@ const mxFunction = base => {
      */
     [openRequest](id) {
       const type = this[readType]();
-      ArcNavigationEvents.navigateRequest(this, id, type);
+      ArcNavigationEvents.navigateRequest(this, id, type, 'open');
     }
 
     /**
@@ -682,9 +682,7 @@ const mxFunction = base => {
       if (!id) {
         return;
       }
-      this.dispatchEvent(new CustomEvent('details', {
-        detail: id,
-      }));
+      ArcNavigationEvents.navigateRequest(this, id, this.type, 'detail');
     }
 
     /**

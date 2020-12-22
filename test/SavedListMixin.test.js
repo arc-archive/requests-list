@@ -134,7 +134,7 @@ describe('SavedListMixin', () => {
       assert.isTrue(element.classList.contains('drop-target'));
     });
 
-    it('ignores saved requests', async () => {
+    it('ignores saved requests (dragOverHandler)', async () => {
       element.requests = /** @type ARCSavedRequest[] */ (generator.generateSavedRequestData({ requestsSize: 5 }).requests);
       await nextFrame();
       const target = element.shadowRoot.querySelector('.request-list-item');
@@ -192,7 +192,7 @@ describe('SavedListMixin', () => {
       assert.isFalse(element.classList.contains('drop-target'));
     });
 
-    it('ignores saved requests', async () => {
+    it('ignores saved requests (dragLeaveHandler)', async () => {
       element.requests = /** @type ARCSavedRequest[] */ (generator.generateSavedRequestData({ requestsSize: 5 }).requests);
       await nextFrame();
       const target = element.shadowRoot.querySelector('.request-list-item');

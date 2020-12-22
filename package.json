@@ -25,12 +25,12 @@
     "url": "git://github.com/advanced-rest-client/requests-list.git"
   },
   "dependencies": {
-    "@advanced-rest-client/arc-events": "^0.2.0",
+    "@advanced-rest-client/arc-events": "^0.2.11",
     "@advanced-rest-client/arc-filesystem": "^0.1.2",
     "@advanced-rest-client/arc-icons": "^3.1.2",
     "@advanced-rest-client/arc-ie": "^1.0.1",
-    "@advanced-rest-client/arc-models": "^4.2.0",
-    "@advanced-rest-client/arc-types": "^0.2.1",
+    "@advanced-rest-client/arc-models": "^4.2.7",
+    "@advanced-rest-client/arc-types": "^0.2.39",
     "@advanced-rest-client/bottom-sheet": "^3.2.1",
     "@anypoint-web-components/anypoint-autocomplete": "^0.2.7",
     "@anypoint-web-components/anypoint-button": "^1.1.1",

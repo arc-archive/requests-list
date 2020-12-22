@@ -245,7 +245,7 @@ describe('RestApisPanelElement', () => {
     });
 
     it('updates existing item', async () => {
-      const item = { ...element.items[1] };
+      const item = { ...element.items[2] };
       item.title = 'test-title';
       const record = {
         id: item._id,
@@ -253,7 +253,7 @@ describe('RestApisPanelElement', () => {
         item,
       };
       ArcModelEvents.RestApi.State.update(document.body, record);
-      assert.equal(element.items[1].title, 'test-title');
+      assert.equal(element.items[2].title, 'test-title');
     });
 
     it('requests for an item if missing', async () => {

@@ -53,7 +53,6 @@ declare interface RequestsListMixinConstructor {
 }
 
 /**
- * @fires details When the request details were requested
  * @fires select When selection change
  */
 declare interface RequestsListMixin extends ListMixin {

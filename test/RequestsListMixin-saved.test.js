@@ -802,9 +802,11 @@ describe('RequestsListMixin (saved)', () => {
       it('"details" button dispatches the details event', () => {
         const node = /** @type HTMLElement */ (element.shadowRoot.querySelector('.request-list-item anypoint-button[data-action="item-detail"]'));
         const spy = sinon.spy();
-        element.addEventListener('details', spy);
+        element.addEventListener(ArcNavigationEventTypes.navigateRequest, spy);
         node.click();
-        assert.isTrue(spy.called);
+        assert.isTrue(spy.called, 'the event is dispatched');
+        const { action } = spy.args[0][0];
+        assert.equal(action, 'detail', 'has the detail action');
       });
 
       it('renders "open" list action', () => {
@@ -824,6 +826,8 @@ describe('RequestsListMixin (saved)', () => {
         element.addEventListener(ArcNavigationEventTypes.navigateRequest, spy);
         node.click();
         assert.isTrue(spy.called);
+        const { action } = spy.args[0][0];
+        assert.equal(action, 'open', 'has the detail action');
       });
     });
   });

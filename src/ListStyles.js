@@ -17,6 +17,7 @@ progress {
 .list {
   flex: 1;
   overflow: auto;
+  background-color: var(--requests-list-list-background-color, inherit);
 }
 
 .history-group {
@@ -27,6 +28,15 @@ progress {
   display: flex;
   align-items: center;
   background-color: var(--requests-list-history-group-header-background-color, #eceff1);
+}
+
+:host([compatibility]) .history-group {
+  border-left-width: 2px;
+  border-right-width: 2px;
+  border-left-color: var(--anypoint-item-border-left-color, var(--anypoint-color-aluminum4));
+  border-right-color: var(--anypoint-item-border-right-color, var(--anypoint-color-aluminum4));
+  border-left-style: solid;
+  border-right-style: solid;
 }
 
 .history-group-label {

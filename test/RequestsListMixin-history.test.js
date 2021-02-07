@@ -389,7 +389,7 @@ describe('RequestsListMixin (history)', () => {
       assert.isTrue(spy.called);
     });
 
-    it('calls [projectRequestChanged]() for project type', async () => {
+    it('does not call [projectRequestChanged]() for a project type when a history item', async () => {
       element.type = 'project';
       const spy = sinon.spy(element, internals.projectRequestChanged);
       const { item } = element.requests[0].requests[0];
@@ -400,7 +400,7 @@ describe('RequestsListMixin (history)', () => {
         item
       });
       await nextFrame();
-      assert.isTrue(spy.called);
+      assert.isFalse(spy.called);
     });
   });
 });

@@ -376,16 +376,16 @@ const mxFunction = base => {
      */
     async [requestChangedHandler](e) {
       const { type } = this;
-      const record = e.changeRecord;
-      let item;
-      if (!record.item) {
-        item = await ArcModelEvents.Request.read(this, type, record.id);
+      const { changeRecord, requestType } = e;
+      let item = /** @type ARCHistoryRequest | ARCSavedRequest */ (null);
+      if (!changeRecord.item) {
+        item = await ArcModelEvents.Request.read(this, requestType, changeRecord.id);
       } else {
-        item = record.item;
+        item = changeRecord.item;
       }
-      if (type === 'project') {
+      if (type === 'project' && requestType === 'saved') {
         this[projectRequestChanged](/** @type ARCSavedRequest */ (item));
-      } else {
+      } else if (requestType === type) {
         this[requestChanged](item);
       }
     }

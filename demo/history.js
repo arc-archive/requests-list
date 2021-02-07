@@ -32,6 +32,8 @@ class ComponentPage extends DemoPage {
     this.listTypeHandler = this.listTypeHandler.bind(this);
     this.selectHandler = this.selectHandler.bind(this);
     this.deleteData = this.deleteData.bind(this);
+    this.createHistoryItem = this.createHistoryItem.bind(this);
+    this.createSavedItem = this.createSavedItem.bind(this);
   }
 
   async generateRequests() {
@@ -44,6 +46,16 @@ class ComponentPage extends DemoPage {
   async deleteData() {
     await this.generator.destroyHistoryData();
     ArcModelEvents.destroyed(document.body, 'all');
+  }
+
+  async createHistoryItem() {
+    const item = this.generator.generateHistoryObject();
+    await ArcModelEvents.Request.store(document.body, 'history', item);
+  }
+
+  async createSavedItem() {
+    const item = this.generator.generateSavedItem();
+    await ArcModelEvents.Request.store(document.body, 'saved', item);
   }
 
   listItemDetailHandler(e) {
@@ -147,7 +159,9 @@ class ComponentPage extends DemoPage {
         This section allows you to control demo data
       </p>
       <anypoint-button @click="${this.generateRequests}">Generate 100 requests</anypoint-button>
-      <anypoint-button @click="${this.deleteData}">Clear list</anypoint-button>
+      <anypoint-button @click="${this.deleteData}">Clear history</anypoint-button>
+      <anypoint-button @click="${this.createHistoryItem}">Create a history item</anypoint-button>
+      <anypoint-button @click="${this.createSavedItem}">Create a saved item</anypoint-button>
     </section>`;
   }
 

@@ -598,7 +598,7 @@ describe('RequestsListMixin (saved)', () => {
       const spy = sinon.spy(element, internals.requestChanged);
       const [item] = element.requests;
       item._rev = 'test-rev';
-      ArcModelEvents.Request.State.update(document.body, 'history', {
+      ArcModelEvents.Request.State.update(document.body, 'saved', {
         id: item._id,
         rev: item._rev,
         item
@@ -607,12 +607,12 @@ describe('RequestsListMixin (saved)', () => {
       assert.isTrue(spy.called);
     });
 
-    it('calls [projectRequestChanged]() for project type', async () => {
+    it('calls [projectRequestChanged]() for the project type and saved item', async () => {
       element.type = 'project';
       const spy = sinon.spy(element, internals.projectRequestChanged);
       const [item] = element.requests;
       item._rev = 'test-rev';
-      ArcModelEvents.Request.State.update(document.body, 'history', {
+      ArcModelEvents.Request.State.update(document.body, 'saved', {
         id: item._id,
         rev: item._rev,
         item
@@ -646,7 +646,7 @@ describe('RequestsListMixin (saved)', () => {
         done();
       };
       item._rev = 'test-rev';
-      ArcModelEvents.Request.State.update(document.body, 'history', {
+      ArcModelEvents.Request.State.update(document.body, 'saved', {
         id: item._id,
         rev: item._rev,
       });

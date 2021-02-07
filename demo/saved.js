@@ -10,6 +10,7 @@ import '@anypoint-web-components/anypoint-checkbox/anypoint-checkbox.js';
 import '@anypoint-web-components/anypoint-radio-button/anypoint-radio-button.js';
 import '@anypoint-web-components/anypoint-radio-button/anypoint-radio-group.js';
 import { ImportEvents } from '@advanced-rest-client/arc-events';
+import { ArcModelEvents } from '@advanced-rest-client/arc-models';
 import './saved-screen.js';
 
 class ComponentPage extends DemoPage {
@@ -30,6 +31,9 @@ class ComponentPage extends DemoPage {
     this.navigateItemDetailHandler = this.navigateItemDetailHandler.bind(this);
     this.listTypeHandler = this.listTypeHandler.bind(this);
     this.selectHandler = this.selectHandler.bind(this);
+    this.createHistoryItem = this.createHistoryItem.bind(this);
+    this.createSavedItem = this.createSavedItem.bind(this);
+    this.clearRequests = this.clearRequests.bind(this);
   }
 
   async generateRequests() {
@@ -37,6 +41,20 @@ class ComponentPage extends DemoPage {
       requestsSize: 100,
     });
     ImportEvents.dataImported(document.body);
+  }
+
+  async clearRequests() {
+    await ArcModelEvents.destroy(document.body, ['saved']);
+  }
+
+  async createHistoryItem() {
+    const item = this.generator.generateHistoryObject();
+    await ArcModelEvents.Request.store(document.body, 'history', item);
+  }
+
+  async createSavedItem() {
+    const item = this.generator.generateSavedItem();
+    await ArcModelEvents.Request.store(document.body, 'saved', item);
   }
 
   listItemDetailHandler(e) {
@@ -140,6 +158,9 @@ class ComponentPage extends DemoPage {
         This section allows you to control demo data
       </p>
       <anypoint-button @click="${this.generateRequests}">Generate 100 requests</anypoint-button>
+      <anypoint-button @click="${this.clearRequests}">Clear saved</anypoint-button>
+      <anypoint-button @click="${this.createHistoryItem}">Create a history item</anypoint-button>
+      <anypoint-button @click="${this.createSavedItem}">Create a saved item</anypoint-button>
     </section>`;
   }
 

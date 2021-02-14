@@ -13,3 +13,4 @@ export { RestApisPanelElement } from './src/RestApisPanelElement';
 export { default as RestApiStyles } from './src/RestApiStyles';
 export { default as ListStyles } from './src/ListStyles';
 export { internals };
+export * from './src/types';

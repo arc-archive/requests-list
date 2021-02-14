@@ -8,6 +8,7 @@ import {
 import { Project, ArcRequest } from '@advanced-rest-client/arc-types'
 import { TemplateResult } from 'lit-html';
 import { ListMixin, ListMixinConstructor } from './ListMixin';
+import { ListType } from './types';
 import {
   busyTemplate,
   requestDeletedHandler,
@@ -75,7 +76,7 @@ declare interface RequestsListMixin extends ListMixin {
    * This property must be set.
    * @attribute
    */
-  type: 'saved'|'history'|'project';
+  type: ListType;
 
   /**
    * Project datastore ID to display.

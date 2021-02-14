@@ -17,10 +17,7 @@
       }
     ]
   },
-  "include": [
-    "**/*.js",
-    "node_modules/@open-wc/**/*.js"
-  ],
+  "include": [ "**/*.js", "**/*.d.ts", "node_modules/@open-wc/**/*.js" ],
   "exclude": [
     "node_modules/!(@open-wc)"
   ]

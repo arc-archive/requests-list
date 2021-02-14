@@ -1,5 +1,7 @@
 import { ARCHistoryRequest } from '@advanced-rest-client/arc-models';
 
+export declare type ListType = 'saved' | 'history' | 'project';
+
 export declare interface HistoryDayItem {
   /**
    * The midnight timestamp for the day

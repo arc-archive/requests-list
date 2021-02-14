@@ -84,6 +84,7 @@ import {
 /** @typedef {import('@advanced-rest-client/arc-types').DataExport.ArcExportResult} ArcExportResult */
 /** @typedef {import('@advanced-rest-client/arc-models').ARCModelStateDeleteEvent} ARCModelStateDeleteEvent */
 /** @typedef {import('lit-element').TemplateResult} TemplateResult */
+/** @typedef {import('./types').ListType} ListType */
 
 /**
  * @param {typeof LitElement} base
@@ -234,7 +235,7 @@ const mxFunction = base => {
       this[dataDestroyHandler] = this[dataDestroyHandler].bind(this);
 
       /**
-       * @type {'saved'|'history'|'project'}
+       * @type {ListType}
        */
       this.type = undefined;
       /**

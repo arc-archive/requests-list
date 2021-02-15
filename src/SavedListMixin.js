@@ -40,6 +40,7 @@ import {
   isValidDragTarget,
   unavailableTemplate,
   exportKindValue,
+  readType,
 } from './internals.js';
 import { savedSort, computeA11yCommand } from './Utils.js';
 import { RequestsListMixin } from './RequestsListMixin.js';
@@ -195,7 +196,8 @@ const mxFunction = base => {
       if (!request.name) {
         request.name = 'Unnamed request';
       }
-      await ArcModelEvents.Request.store(this, this.type, request)
+      const requestType = this[readType]();
+      await ArcModelEvents.Request.store(this, requestType, request)
     }
 
     /**

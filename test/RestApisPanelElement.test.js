@@ -41,7 +41,7 @@ describe('RestApisPanelElement', () => {
       <rest-apis-panel noAuto></rest-apis-panel>
     </div>
     `);
-    return /** @type SavedPanelElement */ el.querySelector('rest-apis-panel');
+    return /** @type RestApisPanelElement */ el.querySelector('rest-apis-panel');
   }
 
   /**
@@ -49,8 +49,11 @@ describe('RestApisPanelElement', () => {
    */
   async function afterQueryFixture() {
     const el = await fixture(modelTemplate());
-    const element = /** @type SavedPanelElement */ el.querySelector('rest-apis-panel');
-    // the query could potentially start already
+    const element = /** @type RestApisPanelElement */ el.querySelector('rest-apis-panel');
+    if (element.items && element.items.length) {
+      return element;
+    }
+    // the query may not have started just yet.
     if (!element.querying) {
       await oneEvent(element, 'queryingchange');
     }
@@ -350,12 +353,13 @@ describe('RestApisPanelElement', () => {
       element = await afterQueryFixture();
     });
 
-    it('deletes item from the data store', () => {
+    it('deletes item from the data store', async () => {
       const spy = sinon.spy();
       element.addEventListener(ArcModelEventTypes.RestApi.delete, spy);
       const node = /** @type HTMLElement */ (element.shadowRoot.querySelector('[data-action="item-delete"]'));
       node.click();
       assert.isTrue(spy.called);
+      await oneEvent(window, ArcModelEventTypes.RestApi.State.delete);
     });
 
     it('ignores when unknown id', () => {

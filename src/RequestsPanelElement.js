@@ -118,7 +118,7 @@ export class RequestsPanelElement extends RequestsListMixin(LitElement) {
 
   async [deleteSelected]() {
     const selected = /** @type string[] */(this[selectedItemsValue]);
-    this[deleteLatestList] = await ArcModelEvents.Request.deleteBulk(this, this.type, selected);
+    this[deleteLatestList] = await ArcModelEvents.Request.deleteBulk(this, this[readType](), selected);
     this[selectedItemsValue] = undefined;
     this[notifySelection]();
     this[deleteUndoOpened] = true;
@@ -150,7 +150,7 @@ export class RequestsPanelElement extends RequestsListMixin(LitElement) {
     if (!deleted || !deleted.length) {
       return;
     }
-    await ArcModelEvents.Request.undeleteBulk(this, this.type, deleted);
+    await ArcModelEvents.Request.undeleteBulk(this, this[readType](), deleted);
     this[deleteLatestList] = undefined;
     this[deleteUndoOpened] = false;
     this.requestUpdate();
@@ -217,8 +217,8 @@ export class RequestsPanelElement extends RequestsListMixin(LitElement) {
    * @param {ProviderOptions} providerOptions
    */
   async [exportSelected](selected, exportOptions, providerOptions) {
-    const requests = await ArcModelEvents.Request.readBulk(this, this.type, selected);
     let dataType = this[readType]();
+    const requests = await ArcModelEvents.Request.readBulk(this, dataType, selected);
     if (dataType === 'saved') {
       dataType = 'requests';
     }

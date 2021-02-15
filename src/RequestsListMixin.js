@@ -333,10 +333,10 @@ const mxFunction = base => {
       this.isSearch = true;
       this[queryingProperty] = true;
       this.requests = undefined;
-  
+      const type = this[readType]();
       try {
         const term = this[prepareQuery](query);
-        const result = await ArcModelEvents.Request.query(this, term, this.type, this.detailedSearch);
+        const result = await ArcModelEvents.Request.query(this, term, type, this.detailedSearch);
         this[appendItems](result);
         this[queryingProperty] = false;
       } catch (e) {
@@ -346,7 +346,7 @@ const mxFunction = base => {
       // This helps prioritize search development
       TelemetryEvents.event(this, {
         category: 'Content search',
-        action: `${this.type} search`
+        action: `${type} search`
       });
     }
 
@@ -406,7 +406,8 @@ const mxFunction = base => {
      */
     [dataDestroyHandler](e) {
       const { store } = e;
-      if (![this.type, 'all'].includes(store)) {
+      const type = this[readType]();
+      if (![this.type, type, 'all'].includes(store)) {
         return;
       }
       this.reset();
@@ -616,7 +617,8 @@ const mxFunction = base => {
       this[queryingProperty] = true;
       try {
         const token = this[pageTokenValue];
-        const response = await ArcModelEvents.Request.list(this, this.type, {
+        const type = this[readType]();
+        const response = await ArcModelEvents.Request.list(this, type, {
           nextPageToken: token,
           limit: this.pageLimit,
         });
@@ -683,7 +685,8 @@ const mxFunction = base => {
       if (!id) {
         return;
       }
-      ArcNavigationEvents.navigateRequest(this, id, this.type, 'detail');
+      const type = this[readType]();
+      ArcNavigationEvents.navigateRequest(this, id, type, 'detail');
     }
 
     /**
@@ -738,9 +741,10 @@ const mxFunction = base => {
       if (!id) {
         return;
       }
+      const type = this[readType]();
       const dt = e.dataTransfer;
       dt.setData('arc/id', id);
-      dt.setData('arc/type', this.type);
+      dt.setData('arc/type', type);
       dt.setData('arc/request', '1');
       dt.setData('arc/source', this.localName);
       dt.effectAllowed = 'copy';

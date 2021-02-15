@@ -15,6 +15,7 @@ import {
   notifyProject,
   computeProjectSelection,
   selectedItemsValue,
+  readType,
 } from './internals.js';
 import { ProjectsListConsumerMixin } from './ProjectsListConsumerMixin.js';
 
@@ -95,7 +96,8 @@ export class SavedPanelElement extends ProjectsListConsumerMixin(SavedListMixin(
       }
       item.projects = item.projects.concat(ids).filter((el, i, arr) => arr.indexOf(el) === i);
     });
-    await ArcModelEvents.Request.updateBulk(this, this.type, requests);
+    const requestType = this[readType]();
+    await ArcModelEvents.Request.updateBulk(this, requestType, requests);
   }
 
   [cancelAddProject]() {

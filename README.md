@@ -13,7 +13,7 @@ This module replaces:
 
 [![Published on NPM](https://img.shields.io/npm/v/@advanced-rest-client/requests-list.svg)](https://www.npmjs.com/package/@advanced-rest-client/requests-list)
 
-[![tests](https://github.com/advanced-rest-client/requests-listn/actions/workflows/deployment.yml/badge.svg)](https://github.com/advanced-rest-client/requests-listn/actions/workflows/deployment.yml)
+[![tests](https://github.com/advanced-rest-client/requests-list/actions/workflows/deployment.yml/badge.svg)](https://github.com/advanced-rest-client/requests-list/actions/workflows/deployment.yml)
 
 ## Usage
 

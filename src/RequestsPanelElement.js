@@ -5,9 +5,8 @@ import '@anypoint-web-components/anypoint-input/anypoint-input.js';
 import '@anypoint-web-components/anypoint-button/anypoint-icon-button.js';
 import '@material/mwc-snackbar';
 import '@advanced-rest-client/bottom-sheet/bottom-sheet.js';
-import '@advanced-rest-client/arc-ie/export-options.js';
-import { ArcModelEvents } from '@advanced-rest-client/arc-models';
-import { ExportEvents } from '@advanced-rest-client/arc-events';
+import '@advanced-rest-client/arc-models/export-options.js';
+import { ArcModelEvents, ExportEvents } from '@advanced-rest-client/arc-events';
 import { RequestsListMixin } from './RequestsListMixin.js';
 import elementStyles from './HistoryPanelStyles.js';
 import listStyles from './ListStyles.js';
@@ -52,7 +51,7 @@ import {
   exportKindValue,
 } from './internals.js';
 
-/** @typedef {import('@advanced-rest-client/arc-ie').ExportOptionsElement} ExportOptionsElement */
+/** @typedef {import('@advanced-rest-client/arc-models').ExportOptionsElement} ExportOptionsElement */
 /** @typedef {import('@advanced-rest-client/arc-types').DataExport.ProviderOptions} ProviderOptions */
 /** @typedef {import('@advanced-rest-client/arc-types').DataExport.ExportOptions} ExportOptions */
 /** @typedef {import('lit-element').TemplateResult} TemplateResult */

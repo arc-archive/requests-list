@@ -7,6 +7,8 @@ import { HistoryGroup } from './types';
 /**
  * @fires details When the request details were requested
  * @fires select When selection change
+ * @fires arcnavigaterequest When a request is being navigated
+ * @fires queryingchange
  */
 export declare class HistoryPanelElement extends HistoryListMixin(RequestsPanelElement) {
   /**

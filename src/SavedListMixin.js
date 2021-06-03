@@ -17,7 +17,7 @@ import { dedupeMixin } from '@open-wc/dedupe-mixin';
 // eslint-disable-next-line no-unused-vars
 import { LitElement, html } from 'lit-element';
 import {classMap} from 'lit-html/directives/class-map.js';
-import { ArcModelEvents } from '@advanced-rest-client/arc-models';
+import { ArcModelEvents } from '@advanced-rest-client/arc-events';
 import {
   appendItems,
   listTemplate,
@@ -300,7 +300,7 @@ const mxFunction = base => {
         ?compatibility="${compatibility}"
       >
         <div class="url">${request.url}</div>
-        <div secondary>${request.name}</div>
+        <div data-secondary>${request.name}</div>
       </anypoint-item-body>
       `;
     }

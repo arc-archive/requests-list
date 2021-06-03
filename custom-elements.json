@@ -8,7 +8,7 @@
         {
           "name": "type",
           "description": "Requests list type. Can be one of:\n- saved\n- history\n- project\n\nDepending on the the type request change event is handled differently.\nFor saved and history requests corresponding type is processed.\nFor project requests list only request that has project id in the\nprojects list is processed.\n\nThis property must be set.",
-          "type": "\"saved\" | \"history\" | \"project\""
+          "type": "ListType"
         },
         {
           "name": "projectId",
@@ -71,7 +71,7 @@
           "name": "type",
           "attribute": "type",
           "description": "Requests list type. Can be one of:\n- saved\n- history\n- project\n\nDepending on the the type request change event is handled differently.\nFor saved and history requests corresponding type is processed.\nFor project requests list only request that has project id in the\nprojects list is processed.\n\nThis property must be set.",
-          "type": "\"saved\" | \"history\" | \"project\""
+          "type": "ListType"
         },
         {
           "name": "projectId",
@@ -181,6 +181,10 @@
         {
           "name": "select",
           "description": "When selection change"
+        },
+        {
+          "name": "arcnavigaterequest",
+          "description": "When a request is being navigated"
         },
         {
           "name": "queryingchange"
@@ -297,7 +301,7 @@
         {
           "name": "type",
           "description": "Requests list type. Can be one of:\n- saved\n- history\n- project\n\nDepending on the the type request change event is handled differently.\nFor saved and history requests corresponding type is processed.\nFor project requests list only request that has project id in the\nprojects list is processed.\n\nThis property must be set.",
-          "type": "\"saved\" | \"history\" | \"project\""
+          "type": "ListType"
         },
         {
           "name": "projectId",
@@ -376,7 +380,7 @@
           "name": "type",
           "attribute": "type",
           "description": "Requests list type. Can be one of:\n- saved\n- history\n- project\n\nDepending on the the type request change event is handled differently.\nFor saved and history requests corresponding type is processed.\nFor project requests list only request that has project id in the\nprojects list is processed.\n\nThis property must be set.",
-          "type": "\"saved\" | \"history\" | \"project\""
+          "type": "ListType"
         },
         {
           "name": "projectId",
@@ -486,6 +490,10 @@
         {
           "name": "select",
           "description": "When selection change"
+        },
+        {
+          "name": "arcnavigaterequest",
+          "description": "When a request is being navigated"
         },
         {
           "name": "queryingchange"

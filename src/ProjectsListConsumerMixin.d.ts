@@ -1,4 +1,4 @@
-import { ARCModelStateDeleteEvent, ARCProjectDeletedEvent, ARCProjectUpdatedEvent } from '@advanced-rest-client/arc-models';
+import { ARCModelStateDeleteEvent, ARCProjectDeletedEvent, ARCProjectUpdatedEvent } from '@advanced-rest-client/arc-events';
 import { Project } from '@advanced-rest-client/arc-types';
 import { Suggestion } from '@anypoint-web-components/anypoint-autocomplete';
 import { 

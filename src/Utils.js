@@ -1,3 +1,4 @@
+/* eslint-disable no-plusplus */
 /** @typedef {import('@advanced-rest-client/arc-types').ArcRequest.ARCSavedRequest} ARCSavedRequest */
 /** @typedef {import('@advanced-rest-client/arc-types').Project.ARCProject} ARCProject */
 

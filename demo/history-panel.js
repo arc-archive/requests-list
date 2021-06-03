@@ -9,17 +9,16 @@ import '@anypoint-web-components/anypoint-button/anypoint-button.js';
 import '@anypoint-web-components/anypoint-checkbox/anypoint-checkbox.js';
 import '@anypoint-web-components/anypoint-radio-button/anypoint-radio-button.js';
 import '@anypoint-web-components/anypoint-radio-button/anypoint-radio-group.js';
-import '@advanced-rest-client/arc-ie/arc-data-export.js';
-import { ImportEvents, DataExportEventTypes, GoogleDriveEventTypes } from '@advanced-rest-client/arc-events';
-import { ArcModelEvents } from '@advanced-rest-client/arc-models'
+import listenEncoding from '@advanced-rest-client/arc-demo-helper/src/EncodingHelpers.js';
+import { ExportHandlerMixin } from '@advanced-rest-client/arc-demo-helper/src/ExportHandlerMixin.js';
+import { ImportEvents, ArcModelEvents } from '@advanced-rest-client/arc-events';
 import '../history-panel.js';
 
-class ComponentPage extends DemoPage {
+class ComponentPage extends ExportHandlerMixin(DemoPage) {
   constructor() {
     super();
     this.initObservableProperties([
       'listActions', 'selectable', 'listType',
-      'exportSheetOpened', 'exportFile', 'exportData',
       'draggableEnabled', 'dropValue',
     ]);
     this.componentName = 'History panel';
@@ -28,10 +27,7 @@ class ComponentPage extends DemoPage {
     this.listActions = false;
     this.selectable = false;
     this.listType = 'default';
-    this.exportSheetOpened = false;
     this.draggableEnabled = false;
-    this.exportFile = undefined;
-    this.exportData = undefined;
     this.dropValue = undefined;
 
     this.generateRequests = this.generateRequests.bind(this);
@@ -45,8 +41,7 @@ class ComponentPage extends DemoPage {
     this.dragEnterHandler = this.dragEnterHandler.bind(this);
     this.dropHandler = this.dropHandler.bind(this);
 
-    window.addEventListener(DataExportEventTypes.fileSave, this.fileExportHandler.bind(this));
-    window.addEventListener(GoogleDriveEventTypes.save, this.fileExportHandler.bind(this));
+    listenEncoding();
   }
 
   async generateRequests() {
@@ -74,20 +69,6 @@ class ComponentPage extends DemoPage {
 
   selectHandler(e) {
     console.log(e.target.selectedItems);
-  }
-
-  fileExportHandler(e) {
-    const { data, providerOptions } = e;
-    setTimeout(() => {
-      this.exportData = JSON.stringify(data, null, 2);
-      this.exportFile = providerOptions.file;
-      this.exportSheetOpened = true;
-    });
-    e.detail.result = Promise.resolve({
-      interrupted: false,
-      parentId: 'demo-drive-parent-id',
-      success: true,
-    });
   }
 
   exportOpenedChanged(e) {
@@ -143,9 +124,6 @@ ${JSON.stringify(request, null, 2)}
       listActions,
       selectable,
       listType,
-      exportSheetOpened,
-      exportData,
-      exportFile,
       draggableEnabled,
     } = this;
     return html`
@@ -217,16 +195,6 @@ ${JSON.stringify(request, null, 2)}
       </arc-interactive-demo>
       ${this._dropTargetTemplate()}
     </section>
-
-    <bottom-sheet
-      .opened="${exportSheetOpened}"
-      @opened="${this.exportOpenedChanged}"
-    >
-      <h3>Export demo</h3>
-      <p>This is a preview of the file. Normally export module would save this data to file / Drive.</p>
-      <p>File: ${exportFile}</p>
-      <pre>${exportData}</pre>
-    </bottom-sheet>
     `;
   }
 
@@ -267,6 +235,7 @@ ${JSON.stringify(request, null, 2)}
       <h2>History panel</h2>
       ${this._demoTemplate()}
       ${this._controlsTemplate()}
+      ${this.exportTemplate()}
     `;
   }
 }

@@ -9,11 +9,12 @@ import '@anypoint-web-components/anypoint-button/anypoint-button.js';
 import '@anypoint-web-components/anypoint-checkbox/anypoint-checkbox.js';
 import '@anypoint-web-components/anypoint-radio-button/anypoint-radio-button.js';
 import '@anypoint-web-components/anypoint-radio-button/anypoint-radio-group.js';
-import { ImportEvents } from '@advanced-rest-client/arc-events';
-import { ArcModelEvents } from '@advanced-rest-client/arc-models';
+import listenEncoding from '@advanced-rest-client/arc-demo-helper/src/EncodingHelpers.js';
+import { ExportHandlerMixin } from '@advanced-rest-client/arc-demo-helper/src/ExportHandlerMixin.js';
+import { ImportEvents, ArcModelEvents } from '@advanced-rest-client/arc-events';
 import './saved-screen.js';
 
-class ComponentPage extends DemoPage {
+class ComponentPage extends ExportHandlerMixin(DemoPage) {
   constructor() {
     super();
     this.initObservableProperties([
@@ -34,6 +35,8 @@ class ComponentPage extends DemoPage {
     this.createHistoryItem = this.createHistoryItem.bind(this);
     this.createSavedItem = this.createSavedItem.bind(this);
     this.clearRequests = this.clearRequests.bind(this);
+
+    listenEncoding();
   }
 
   async generateRequests() {
@@ -171,6 +174,7 @@ class ComponentPage extends DemoPage {
       <h2>Saved list</h2>
       ${this._demoTemplate()}
       ${this._controlsTemplate()}
+      ${this.exportTemplate()}
     `;
   }
 }

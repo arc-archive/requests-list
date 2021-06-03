@@ -2,8 +2,7 @@
 /* eslint-disable no-param-reassign */
 import { fixture, assert, html, nextFrame, oneEvent } from '@open-wc/testing';
 import { DataGenerator } from '@advanced-rest-client/arc-data-generator';
-import { ArcModelEvents, ArcModelEventTypes } from '@advanced-rest-client/arc-models';
-import { ArcNavigationEventTypes } from '@advanced-rest-client/arc-events';
+import { ArcNavigationEventTypes, ArcModelEvents, ArcModelEventTypes } from '@advanced-rest-client/arc-events';
 import '@advanced-rest-client/arc-models/project-model.js';
 import '@advanced-rest-client/arc-models/request-model.js';
 import sinon from 'sinon';

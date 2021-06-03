@@ -1,11 +1,10 @@
 import { 
   ARCRequestDeletedEvent,
   ARCRequestUpdatedEvent,
-  ARCEntityChangeRecord,
   ARCProjectUpdatedEvent,
   ARCModelStateDeleteEvent,
-} from '@advanced-rest-client/arc-models';
-import { Project, ArcRequest } from '@advanced-rest-client/arc-types'
+} from '@advanced-rest-client/arc-events';
+import { Project, ArcRequest, Model } from '@advanced-rest-client/arc-types'
 import { TemplateResult } from 'lit-html';
 import { ListMixin, ListMixinConstructor } from './ListMixin';
 import { ListType } from './types';
@@ -55,6 +54,8 @@ declare interface RequestsListMixinConstructor {
 
 /**
  * @fires select When selection change
+ * @fires arcnavigaterequest When a request is being navigated
+ * @fires queryingchange
  */
 declare interface RequestsListMixin extends ListMixin {
   /**
@@ -228,7 +229,7 @@ declare interface RequestsListMixin extends ListMixin {
    * 
    * @return Change record or undefined when it has the same order
    */
-  [persistRequestsOrder](): Promise<ARCEntityChangeRecord<Project.ARCProject>|undefined>;
+  [persistRequestsOrder](): Promise<Model.ARCEntityChangeRecord<Project.ARCProject>|undefined>;
 
   /**
    * Handler for the project change event.

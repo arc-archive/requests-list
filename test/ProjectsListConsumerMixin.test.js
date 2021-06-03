@@ -1,8 +1,7 @@
 import { fixture, assert, aTimeout, oneEvent } from '@open-wc/testing';
 import sinon from 'sinon';
 import { DataGenerator } from '@advanced-rest-client/arc-data-generator';
-import { ImportEvents } from '@advanced-rest-client/arc-events';
-import { ArcModelEvents } from '@advanced-rest-client/arc-models';
+import { ImportEvents, ArcModelEvents } from '@advanced-rest-client/arc-events';
 import '@advanced-rest-client/arc-models/request-model.js';
 import '@advanced-rest-client/arc-models/project-model.js';
 import './projects-consumer-element.js';

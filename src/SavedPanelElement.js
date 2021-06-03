@@ -4,7 +4,7 @@ import { html } from 'lit-element';
 import '@advanced-rest-client/arc-icons/arc-icon.js';
 import '@anypoint-web-components/anypoint-button/anypoint-icon-button.js';
 import '@anypoint-web-components/anypoint-chip-input/anypoint-chip-input.js';
-import { ArcModelEvents } from '@advanced-rest-client/arc-models';
+import { ArcModelEvents } from '@advanced-rest-client/arc-events';
 import { SavedListMixin } from './SavedListMixin.js';
 import { RequestsPanelElement } from './RequestsPanelElement.js';
 import { 

@@ -1,5 +1,5 @@
 import { TemplateResult } from 'lit-element';
-import { ARCRequestDeletedEvent } from '@advanced-rest-client/arc-models';
+import { ARCRequestDeletedEvent } from '@advanced-rest-client/arc-events';
 import { ArcRequest } from '@advanced-rest-client/arc-types';
 import { HistoryGroup, HistoryListItem, HistoryDayItem } from './types';
 import { RequestsListMixinConstructor, RequestsListMixin } from './RequestsListMixin';
@@ -32,6 +32,10 @@ declare interface HistoryListMixinConstructor {
   new(...args: any[]): HistoryListMixin;
 }
 
+/**
+ * @fires arcnavigaterequest When a request is being navigated
+ * @fires queryingchange
+ */
 declare interface HistoryListMixin extends RequestsListMixin {
   requests: HistoryGroup[];
 

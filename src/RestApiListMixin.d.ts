@@ -2,7 +2,7 @@ import {
   ARCRestApiUpdatedEvent,
   ARCRestApiDeletedEvent,
   ARCModelStateDeleteEvent,
-} from '@advanced-rest-client/arc-models';
+} from '@advanced-rest-client/arc-events';
 import { RestApi } from '@advanced-rest-client/arc-types'
 import { TemplateResult } from 'lit-html';
 import { ListMixin, ListMixinConstructor } from './ListMixin';

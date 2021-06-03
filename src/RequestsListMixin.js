@@ -19,8 +19,7 @@ import { dedupeMixin } from '@open-wc/dedupe-mixin';
 import { LitElement, html } from 'lit-element';
 import {classMap} from 'lit-html/directives/class-map.js';
 import {ifDefined} from 'lit-html/directives/if-defined.js';
-import { ArcModelEventTypes, ArcModelEvents } from '@advanced-rest-client/arc-models';
-import { DataImportEventTypes, ArcNavigationEvents, TelemetryEvents } from '@advanced-rest-client/arc-events';
+import { ArcModelEventTypes, ArcModelEvents, DataImportEventTypes, ArcNavigationEvents, TelemetryEvents } from '@advanced-rest-client/arc-events';
 import '@advanced-rest-client/arc-icons/arc-icon.js';
 import '@anypoint-web-components/anypoint-button/anypoint-icon-button.js';
 import '@api-components/http-method-label/http-method-label.js';
@@ -72,17 +71,17 @@ import {
   listScrollHandler,
 } from './internals.js';
 
-/** @typedef {import('@advanced-rest-client/arc-models').ARCRequestDeletedEvent} ARCRequestDeletedEvent */
-/** @typedef {import('@advanced-rest-client/arc-models').ARCRequestUpdatedEvent} ARCRequestUpdatedEvent */
-/** @typedef {import('@advanced-rest-client/arc-models').ARCProjectUpdatedEvent} ARCProjectUpdatedEvent */
+/** @typedef {import('@advanced-rest-client/arc-events').ARCRequestDeletedEvent} ARCRequestDeletedEvent */
+/** @typedef {import('@advanced-rest-client/arc-events').ARCRequestUpdatedEvent} ARCRequestUpdatedEvent */
+/** @typedef {import('@advanced-rest-client/arc-events').ARCProjectUpdatedEvent} ARCProjectUpdatedEvent */
+/** @typedef {import('@advanced-rest-client/arc-events').ARCModelStateDeleteEvent} ARCModelStateDeleteEvent */
 /** @typedef {import('@advanced-rest-client/arc-models').ARCHistoryRequest} ARCHistoryRequest */
 /** @typedef {import('@advanced-rest-client/arc-models').ARCSavedRequest} ARCSavedRequest */
 /** @typedef {import('@advanced-rest-client/arc-models').ARCProject} ARCProject */
-/** @typedef {import('@advanced-rest-client/arc-models').ARCEntityChangeRecord} ARCEntityChangeRecord */
 /** @typedef {import('@advanced-rest-client/arc-types').DataExport.ExportOptions} ExportOptions */
 /** @typedef {import('@advanced-rest-client/arc-types').DataExport.ProviderOptions} ProviderOptions */
 /** @typedef {import('@advanced-rest-client/arc-types').DataExport.ArcExportResult} ArcExportResult */
-/** @typedef {import('@advanced-rest-client/arc-models').ARCModelStateDeleteEvent} ARCModelStateDeleteEvent */
+/** @typedef {import('@advanced-rest-client/arc-types').Model.ARCEntityChangeRecord} ARCEntityChangeRecord */
 /** @typedef {import('lit-element').TemplateResult} TemplateResult */
 /** @typedef {import('./types').ListType} ListType */
 

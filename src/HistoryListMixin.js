@@ -18,7 +18,7 @@ the License.
 import { dedupeMixin } from '@open-wc/dedupe-mixin';
 // eslint-disable-next-line no-unused-vars
 import { LitElement, html } from 'lit-element';
-import {classMap} from 'lit-html/directives/class-map.js';
+import { classMap } from 'lit-html/directives/class-map.js';
 import {
   appendItems,
   createHistoryGroup,
@@ -46,8 +46,8 @@ import {
 import { midnightTimestamp } from './Utils.js';
 import { RequestsListMixin } from './RequestsListMixin.js';
 
-/** @typedef {import('@advanced-rest-client/arc-models').ARCRequestDeletedEvent} ARCRequestDeletedEvent */
-/** @typedef {import('@advanced-rest-client/arc-models').ARCModelStateDeleteEvent} ARCModelStateDeleteEvent */
+/** @typedef {import('@advanced-rest-client/arc-events').ARCRequestDeletedEvent} ARCRequestDeletedEvent */
+/** @typedef {import('@advanced-rest-client/arc-events').ARCModelStateDeleteEvent} ARCModelStateDeleteEvent */
 /** @typedef {import('@advanced-rest-client/arc-types').ArcRequest.ARCHistoryRequest} ARCHistoryRequest */
 /** @typedef {import('lit-element').TemplateResult} TemplateResult */
 /** @typedef {import('./types').HistoryListItem} HistoryListItem */
@@ -387,7 +387,7 @@ const mxFunction = base => {
         ?compatibility="${compatibility}"
       >
         <div class="url">${item.item.url}</div>
-        <div secondary>
+        <div data-secondary>
           <relative-time datetime="${item.isoTime}">${item.isoTime}</relative-time>
           at <local-time datetime="${item.isoTime}" hour="2-digit" minute="2-digit" second="2-digit"></local-time>
         </div>

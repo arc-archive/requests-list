@@ -1,6 +1,6 @@
 import { fixture, assert, html, nextFrame } from '@open-wc/testing';
 import { DataGenerator } from '@advanced-rest-client/arc-data-generator';
-import { ArcModelEvents } from '@advanced-rest-client/arc-models';
+import { ArcModelEvents } from '@advanced-rest-client/arc-events';
 import '../history-panel.js'
 import { internals } from '../index.js';
 

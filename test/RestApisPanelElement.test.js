@@ -3,15 +3,14 @@
 import { fixture, assert, html, oneEvent, nextFrame } from '@open-wc/testing';
 import { DataGenerator } from '@advanced-rest-client/arc-data-generator';
 import '@advanced-rest-client/arc-models/rest-api-model.js';
-import { ArcModelEventTypes, ArcModelEvents } from '@advanced-rest-client/arc-models';
-import { ArcNavigationEventTypes, ImportEvents } from '@advanced-rest-client/arc-events';
+import { ArcNavigationEventTypes, ImportEvents, ArcModelEventTypes, ArcModelEvents } from '@advanced-rest-client/arc-events';
 import sinon from 'sinon';
 import '../rest-apis-panel.js'
 import { internals } from '../index.js';
 
-/** @typedef {import('@advanced-rest-client/arc-models').ARCModelStateDeleteEvent} ARCModelStateDeleteEvent */
-/** @typedef {import('@advanced-rest-client/arc-models').ARCRestApiDeletedEvent} ARCRestApiDeletedEvent */
-/** @typedef {import('@advanced-rest-client/arc-models').ARCRestApiUpdatedEvent} ARCRestApiUpdatedEvent */
+/** @typedef {import('@advanced-rest-client/arc-events').ARCModelStateDeleteEvent} ARCModelStateDeleteEvent */
+/** @typedef {import('@advanced-rest-client/arc-events').ARCRestApiDeletedEvent} ARCRestApiDeletedEvent */
+/** @typedef {import('@advanced-rest-client/arc-events').ARCRestApiUpdatedEvent} ARCRestApiUpdatedEvent */
 /** @typedef {import('@advanced-rest-client/arc-models').ARCRestApiIndex} ARCRestApiIndex */
 /** @typedef {import('../').RestApisPanelElement} RestApisPanelElement */
 /** @typedef {import('lit-html').TemplateResult} TemplateResult */

@@ -17,8 +17,7 @@ import { dedupeMixin } from '@open-wc/dedupe-mixin';
 // eslint-disable-next-line no-unused-vars
 import { LitElement, html } from 'lit-element';
 import { ArcFileDropMixin } from '@advanced-rest-client/arc-filesystem';
-import { ArcModelEventTypes, ArcModelEvents } from '@advanced-rest-client/arc-models';
-import { DataImportEventTypes, ArcNavigationEvents } from '@advanced-rest-client/arc-events';
+import { ArcModelEventTypes, ArcModelEvents, DataImportEventTypes, ArcNavigationEvents } from '@advanced-rest-client/arc-events';
 import '@anypoint-web-components/anypoint-item/anypoint-item.js';
 import '@anypoint-web-components/anypoint-item/anypoint-item-body.js';
 import { ListMixin } from './ListMixin.js';
@@ -45,9 +44,9 @@ import {
   queryingProperty,
 } from './internals.js';
 
-/** @typedef {import('@advanced-rest-client/arc-models').ARCModelStateDeleteEvent} ARCModelStateDeleteEvent */
-/** @typedef {import('@advanced-rest-client/arc-models').ARCRestApiDeletedEvent} ARCRestApiDeletedEvent */
-/** @typedef {import('@advanced-rest-client/arc-models').ARCRestApiUpdatedEvent} ARCRestApiUpdatedEvent */
+/** @typedef {import('@advanced-rest-client/arc-events').ARCModelStateDeleteEvent} ARCModelStateDeleteEvent */
+/** @typedef {import('@advanced-rest-client/arc-events').ARCRestApiDeletedEvent} ARCRestApiDeletedEvent */
+/** @typedef {import('@advanced-rest-client/arc-events').ARCRestApiUpdatedEvent} ARCRestApiUpdatedEvent */
 /** @typedef {import('@advanced-rest-client/arc-types').RestApi.ARCRestApiIndex} ARCRestApiIndex */
 /** @typedef {import('lit-element').TemplateResult} TemplateResult */
 
@@ -413,7 +412,7 @@ const mxFunction = base => {
         ?compatibility="${compatibility}"
       >
         <div class="api-title">${api.title}</div>
-        <div secondary="" class="details">Version: ${api.latest}</div>
+        <div data-secondary class="details">Version: ${api.latest}</div>
       </anypoint-item-body>
       `;
     }

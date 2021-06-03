@@ -6,9 +6,8 @@ import '@advanced-rest-client/arc-models/rest-api-model.js';
 import '@anypoint-web-components/anypoint-button/anypoint-button.js';
 import '@anypoint-web-components/anypoint-radio-button/anypoint-radio-button.js';
 import '@anypoint-web-components/anypoint-radio-button/anypoint-radio-group.js';
-import '@advanced-rest-client/arc-ie/arc-data-export.js';
-import { ImportEvents, ArcNavigationEventTypes } from '@advanced-rest-client/arc-events';
-import { ArcModelEvents } from '@advanced-rest-client/arc-models'
+import '@advanced-rest-client/arc-models/arc-data-export.js';
+import { ImportEvents, ArcNavigationEventTypes, ArcModelEvents } from '@advanced-rest-client/arc-events';
 import '../rest-apis-panel.js';
 
 /** @typedef {import('@advanced-rest-client/arc-events').ARCRestApiNavigationEvent} ARCRestApiNavigationEvent */

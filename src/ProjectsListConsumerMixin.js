@@ -16,8 +16,7 @@ the License.
 import { dedupeMixin } from '@open-wc/dedupe-mixin';
 // eslint-disable-next-line no-unused-vars
 import { LitElement } from 'lit-element';
-import { ArcModelEventTypes, ArcModelEvents } from '@advanced-rest-client/arc-models';
-import { DataImportEventTypes } from '@advanced-rest-client/arc-events';
+import { ArcModelEventTypes, ArcModelEvents, DataImportEventTypes } from '@advanced-rest-client/arc-events';
 import { 
   hasProjectsValue,
   projectsValue,
@@ -37,9 +36,9 @@ import { projectsSortFn } from './Utils.js';
 
 /** @typedef {import('@advanced-rest-client/arc-types').Project.ARCProject} ARCProject */
 /** @typedef {import('@advanced-rest-client/arc-types').ArcRequest.ARCSavedRequest} ARCSavedRequest */
-/** @typedef {import('@advanced-rest-client/arc-models').ARCModelStateDeleteEvent} ARCModelStateDeleteEvent */
-/** @typedef {import('@advanced-rest-client/arc-models').ARCProjectUpdatedEvent} ARCProjectUpdatedEvent */
-/** @typedef {import('@advanced-rest-client/arc-models').ARCProjectDeletedEvent} ARCProjectDeletedEvent */
+/** @typedef {import('@advanced-rest-client/arc-events').ARCModelStateDeleteEvent} ARCModelStateDeleteEvent */
+/** @typedef {import('@advanced-rest-client/arc-events').ARCProjectUpdatedEvent} ARCProjectUpdatedEvent */
+/** @typedef {import('@advanced-rest-client/arc-events').ARCProjectDeletedEvent} ARCProjectDeletedEvent */
 /** @typedef {import('@anypoint-web-components/anypoint-autocomplete').Suggestion} Suggestion */
 /** @typedef {import('./ProjectsListConsumerMixin').ProjectSelectionInfo} ProjectSelectionInfo */
 

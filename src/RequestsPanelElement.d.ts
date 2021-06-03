@@ -1,10 +1,4 @@
 import { LitElement, CSSResult, TemplateResult } from 'lit-element';
-import '@advanced-rest-client/arc-icons/arc-icon.js';
-import '@anypoint-web-components/anypoint-input/anypoint-input.js';
-import '@anypoint-web-components/anypoint-button/anypoint-icon-button.js';
-import '@material/mwc-snackbar';
-import '@advanced-rest-client/bottom-sheet/bottom-sheet.js';
-import '@advanced-rest-client/arc-ie/export-options.js';
 import { RequestsListMixin } from './RequestsListMixin.js';
 import {
   contentActionsTemplate,
@@ -34,6 +28,12 @@ import {
 } from './internals.js';
 import { DataExport } from '@advanced-rest-client/arc-types'
 
+/**
+ * @fires details When the request details were requested
+ * @fires select When selection change
+ * @fires arcnavigaterequest When a request is being navigated
+ * @fires queryingchange
+ */
 export declare class RequestsPanelElement extends RequestsListMixin(LitElement) {
   static readonly styles: CSSResult[];
 

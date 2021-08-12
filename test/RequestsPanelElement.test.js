@@ -1,5 +1,5 @@
 import { fixture, assert, html, oneEvent, nextFrame } from '@open-wc/testing';
-import { DataGenerator } from '@advanced-rest-client/arc-data-generator';
+import { ArcMock } from '@advanced-rest-client/arc-data-generator';
 import { DataExportEventTypes, ArcModelEventTypes } from '@advanced-rest-client/arc-events';
 import sinon from 'sinon';
 import '@advanced-rest-client/arc-models/project-model.js';
@@ -12,7 +12,7 @@ import { internals } from '../index.js';
 /** @typedef {import('lit-html').TemplateResult} TemplateResult */
 
 describe('RequestsPanelElement', () => {
-  const generator = new DataGenerator();
+  const generator = new ArcMock();
 
   /**
    * @returns {TemplateResult}
@@ -73,14 +73,14 @@ describe('RequestsPanelElement', () => {
     });
 
     it('sets selected items', () => {
-      const items = /** @type ARCSavedRequest[] */ (generator.generateSavedRequestData().requests);
+      const items = /** @type ARCSavedRequest[] */ (generator.http.savedData().requests);
       element[internals.appendItems](items);
       element.toggleSelection();
       assert.lengthOf(element.selectedItems, items.length);
     });
 
     it('overrides previous selection', () => {
-      const items = /** @type ARCSavedRequest[] */ (generator.generateSavedRequestData().requests);
+      const items = /** @type ARCSavedRequest[] */ (generator.http.savedData().requests);
       element[internals.appendItems](items);
       element.selectedItems = [items[0]._id];
       element.toggleSelection();
@@ -88,7 +88,7 @@ describe('RequestsPanelElement', () => {
     });
 
     it('clears the selection', () => {
-      const items = /** @type ARCSavedRequest[] */ (generator.generateSavedRequestData().requests);
+      const items = /** @type ARCSavedRequest[] */ (generator.http.savedData().requests);
       element[internals.appendItems](items);
       element[internals.toggleSelectAllValue] = true;
       element.toggleSelection();
@@ -98,14 +98,11 @@ describe('RequestsPanelElement', () => {
 
   describe('content actions', () => {
     before(async () => {
-      await generator.insertSavedRequestData({
-        projectsSize: 1,
-        requestsSize: 20,
-      });
+      await generator.store.insertSaved(20, 1);
     });
     
     after(async () => {
-      await generator.destroySavedRequestData();
+      await generator.store.destroySaved();
     });
 
     let element = /** @type SavedPanelElement */(null);
@@ -160,14 +157,11 @@ describe('RequestsPanelElement', () => {
 
   describe('[searchHandler]()', () => {
     before(async () => {
-      await generator.insertSavedRequestData({
-        projectsSize: 1,
-        requestsSize: 20,
-      });
+      await generator.store.insertSaved(20, 1);
     });
     
     after(async () => {
-      await generator.destroySavedRequestData();
+      await generator.store.destroySaved();
     });
 
     let element = /** @type SavedPanelElement */(null);
@@ -189,14 +183,11 @@ describe('RequestsPanelElement', () => {
 
   describe('[listScrollHandler]()', () => {
     before(async () => {
-      await generator.insertSavedRequestData({
-        projectsSize: 1,
-        requestsSize: 50,
-      });
+      await generator.store.insertSaved(50, 1);
     });
     
     after(async () => {
-      await generator.destroySavedRequestData();
+      await generator.store.destroySaved();
     });
 
     let element = /** @type SavedPanelElement */(null);
@@ -225,14 +216,11 @@ describe('RequestsPanelElement', () => {
 
   describe('[deleteSelected]()', () => {
     before(async () => {
-      await generator.insertSavedRequestData({
-        projectsSize: 1,
-        requestsSize: 50,
-      });
+      await generator.store.insertSaved(50, 1);
     });
     
     after(async () => {
-      await generator.destroySavedRequestData();
+      await generator.store.destroySaved();
     });
 
     let element = /** @type SavedPanelElement */(null);
@@ -371,14 +359,11 @@ describe('RequestsPanelElement', () => {
 
   describe('[deleteUndoAction]()', () => {
     before(async () => {
-      await generator.insertSavedRequestData({
-        projectsSize: 1,
-        requestsSize: 5,
-      });
+      await generator.store.insertSaved(5, 1);
     });
     
     after(async () => {
-      await generator.destroySavedRequestData();
+      await generator.store.destroySaved();
     });
 
     let element = /** @type SavedPanelElement */(null);
@@ -544,10 +529,7 @@ describe('RequestsPanelElement', () => {
 
     let handler;
     before(async () => {
-      const created = await generator.insertSavedRequestData({
-        projectsSize: 1,
-        requestsSize: 5,
-      });
+      const created = await generator.store.insertSaved(5, 1);
       selected.push(created.requests[0]._id);
       handler = (e) => {
         e.preventDefault();
@@ -562,7 +544,7 @@ describe('RequestsPanelElement', () => {
 
     after(async () => {
       window.removeEventListener(DataExportEventTypes.nativeData, handler);
-      await generator.destroySavedRequestData();
+      await generator.store.destroySaved();
     });
 
     it('dispatches the export event', async () => {
@@ -633,10 +615,7 @@ describe('RequestsPanelElement', () => {
 
     let handler;
     before(async () => {
-      const created = await generator.insertSavedRequestData({
-        projectsSize: 1,
-        requestsSize: 5,
-      });
+      const created = await generator.store.insertSaved(5, 1);
       selected.push(created.requests[0]._id);
       handler = (e) => {
         e.preventDefault();
@@ -651,7 +630,7 @@ describe('RequestsPanelElement', () => {
 
     after(async () => {
       window.removeEventListener(DataExportEventTypes.nativeData, handler);
-      await generator.destroySavedRequestData();
+      await generator.store.destroySaved();
     });
 
     it('calls [exportAll] when no selection', async () => {

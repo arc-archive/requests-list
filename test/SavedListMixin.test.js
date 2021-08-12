@@ -1,5 +1,5 @@
 import { fixture, assert, html, oneEvent, nextFrame } from '@open-wc/testing';
-import { DataGenerator } from '@advanced-rest-client/arc-data-generator';
+import { ArcMock } from '@advanced-rest-client/arc-data-generator';
 import { ArcModelEvents, ArcModelEventTypes } from '@advanced-rest-client/arc-events';
 import sinon from 'sinon';
 import '@advanced-rest-client/arc-models/request-model.js';
@@ -14,7 +14,7 @@ import { internals } from '../index.js';
 /** @typedef {import('lit-html').TemplateResult} TemplateResult */
 
 describe('SavedListMixin', () => {
-  const generator = new DataGenerator();
+  const generator = new ArcMock();
 
   /**
    * @returns {TemplateResult}
@@ -88,13 +88,11 @@ describe('SavedListMixin', () => {
 
   describe('[dragOverHandler]', () => {
     before(async () => {
-      await generator.insertHistoryRequestData({
-        requestsSize: 5,
-      });
+      await generator.store.insertHistory(5);
     });
     
     after(async () => {
-      await generator.destroyHistoryData();
+      await generator.store.destroyHistory();
     });
 
     let element = /** @type SavedPanelElement */(null);
@@ -135,7 +133,7 @@ describe('SavedListMixin', () => {
     });
 
     it('ignores saved requests (dragOverHandler)', async () => {
-      element.requests = /** @type ARCSavedRequest[] */ (generator.generateSavedRequestData({ requestsSize: 5 }).requests);
+      element.requests = /** @type ARCSavedRequest[] */ (generator.http.savedData(5).requests);
       await nextFrame();
       const target = element.shadowRoot.querySelector('.request-list-item');
       dispatchEvent(target);
@@ -146,13 +144,11 @@ describe('SavedListMixin', () => {
 
   describe('[dragLeaveHandler]', () => {
     before(async () => {
-      await generator.insertHistoryRequestData({
-        requestsSize: 5,
-      });
+      await generator.store.insertHistory(5);
     });
     
     after(async () => {
-      await generator.destroyHistoryData();
+      await generator.store.destroyHistory();
     });
 
     let element = /** @type SavedPanelElement */(null);
@@ -193,7 +189,7 @@ describe('SavedListMixin', () => {
     });
 
     it('ignores saved requests (dragLeaveHandler)', async () => {
-      element.requests = /** @type ARCSavedRequest[] */ (generator.generateSavedRequestData({ requestsSize: 5 }).requests);
+      element.requests = /** @type ARCSavedRequest[] */ (generator.http.savedData(5).requests);
       await nextFrame();
       const target = element.shadowRoot.querySelector('.request-list-item');
       dispatchEvent(target);
@@ -204,14 +200,12 @@ describe('SavedListMixin', () => {
 
   describe('[dropHandler]', () => {
     before(async () => {
-      await generator.insertHistoryRequestData({
-        requestsSize: 5,
-      });
+      await generator.store.insertHistory(5);
     });
     
     after(async () => {
-      await generator.destroyHistoryData();
-      await generator.destroySavedRequestData();
+      await generator.store.destroyHistory();
+      await generator.store.destroySaved();
     });
 
     let element = /** @type SavedPanelElement */(null);

@@ -1,6 +1,6 @@
 import { fixture, assert, aTimeout, oneEvent } from '@open-wc/testing';
 import sinon from 'sinon';
-import { DataGenerator } from '@advanced-rest-client/arc-data-generator';
+import { ArcMock } from '@advanced-rest-client/arc-data-generator';
 import { ImportEvents, ArcModelEvents } from '@advanced-rest-client/arc-events';
 import '@advanced-rest-client/arc-models/request-model.js';
 import '@advanced-rest-client/arc-models/project-model.js';
@@ -16,7 +16,7 @@ import {
 /** @typedef {import('./projects-consumer-element').ProjectsConsumerElement} ProjectsConsumerElement */
 
 describe('ProjectsListConsumerMixin', () => {
-  const generator = new DataGenerator();
+  const generator = new ArcMock();
 
   /**
    * @returns {Promise<ProjectsConsumerElement>}
@@ -80,25 +80,25 @@ describe('ProjectsListConsumerMixin', () => {
     });
 
     it('resets projects with "legacy-projects" datastore', () => {
-      element[projectsValue] = generator.generateProjects();
+      element[projectsValue] = generator.http.listProjects();
       ArcModelEvents.destroyed(document.body, 'legacy-projects');
       assert.isUndefined(element[projectsValue]);
     });
 
     it('resets projects with "all" datastore', () => {
-      element[projectsValue] = generator.generateProjects();
+      element[projectsValue] = generator.http.listProjects();
       ArcModelEvents.destroyed(document.body, 'all');
       assert.isUndefined(element[projectsValue]);
     });
 
     it('resets projects with "projects" datastore', () => {
-      element[projectsValue] = generator.generateProjects();
+      element[projectsValue] = generator.http.listProjects();
       ArcModelEvents.destroyed(document.body, 'projects');
       assert.isUndefined(element[projectsValue]);
     });
 
     it('ignores other stores', () => {
-      element[projectsValue] = generator.generateProjects();
+      element[projectsValue] = generator.http.listProjects();
       ArcModelEvents.destroyed(document.body, 'saved');
       assert.typeOf(element[projectsValue], 'array');
     });
@@ -245,14 +245,13 @@ describe('ProjectsListConsumerMixin', () => {
     });
 
     before(async () => {
-      await generator.insertProjectsData({
-        projectsSize: 20,
-        autoRequestId: true
+      await generator.store.insertProjects(20, {
+        autoRequestId: true,
       });
     });
 
     after(async () => {
-      await generator.destroySavedRequestData();
+      await generator.store.destroySaved();
     });
 
     it('updates projects list', async () => {
@@ -287,14 +286,13 @@ describe('ProjectsListConsumerMixin', () => {
     });
 
     before(async () => {
-      await generator.insertProjectsData({
-        projectsSize: 20,
-        autoRequestId: true
+      await generator.store.insertProjects(20, {
+        autoRequestId: true,
       });
     });
 
     after(async () => {
-      await generator.destroySavedRequestData();
+      await generator.store.destroySaved();
     });
 
     it('updates project on the list of projects', async () => {
@@ -310,7 +308,7 @@ describe('ProjectsListConsumerMixin', () => {
     });
 
     it('adds new project to the list', async () => {
-      const project = generator.generateProjects({ projectsSize: 1 })[0];
+      const project = generator.http.project();
       const record = {
         id: project._id,
         rev: 'test-rev',
@@ -322,7 +320,7 @@ describe('ProjectsListConsumerMixin', () => {
 
     it('adds new project when no projects', async () => {
       element[projectsValue] = undefined;
-      const project = generator.generateProjects({ projectsSize: 1 })[0];
+      const project = generator.http.project();
       const record = {
         id: project._id,
         rev: 'test-rev',
@@ -334,9 +332,7 @@ describe('ProjectsListConsumerMixin', () => {
     });
     
     it('reads project data when missing', async () => {
-      const projects = await generator.insertProjectsData({
-        projectsSize: 1,
-      });
+      const projects = await generator.store.insertProjects(1);
       const record = {
         id: projects[0]._id,
         rev: projects[0]._rev,
@@ -354,14 +350,11 @@ describe('ProjectsListConsumerMixin', () => {
     });
 
     before(async () => {
-      await generator.insertProjectsData({
-        projectsSize: 20,
-        autoRequestId: true
-      });
+      await generator.store.insertProjects(20, { autoRequestId: true });
     });
 
     after(async () => {
-      await generator.destroySavedRequestData();
+      await generator.store.destroySaved();
     });
 
     it('removes a project from the list', () => {

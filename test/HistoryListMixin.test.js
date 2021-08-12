@@ -1,5 +1,5 @@
 import { fixture, assert, html, nextFrame } from '@open-wc/testing';
-import { DataGenerator } from '@advanced-rest-client/arc-data-generator';
+import { ArcMock } from '@advanced-rest-client/arc-data-generator';
 import { ArcModelEvents } from '@advanced-rest-client/arc-events';
 import '../history-panel.js'
 import { internals } from '../index.js';
@@ -9,7 +9,7 @@ import { internals } from '../index.js';
 /** @typedef {import('@advanced-rest-client/arc-models').ARCSavedRequest} ARCSavedRequest */
 
 describe('HistoryListMixin', () => {
-  const generator = new DataGenerator();
+  const generator = new ArcMock();
 
   /**
    * @returns {Promise<HistoryPanelElement>}
@@ -88,13 +88,13 @@ describe('HistoryListMixin', () => {
     });
 
     it('sets the requests property', () => {
-      const items = /** @type ARCHistoryRequest[] */ (generator.generateHistoryRequestsData());
+      const items = /** @type ARCHistoryRequest[] */ (generator.http.listHistory());
       element[internals.appendItems](items);
       assert.typeOf(element.requests, 'array');
     });
 
     it('adds history group', () => {
-      const item = /** @type ARCHistoryRequest */ (generator.generateHistoryObject());
+      const item = /** @type ARCHistoryRequest */ (generator.http.history());
       element[internals.appendItems]([item]);
       const [group] = element.requests;
       assert.typeOf(group.day, 'object', 'day property is set');
@@ -103,7 +103,7 @@ describe('HistoryListMixin', () => {
     });
 
     it('adds newer item to an existing group', () => {
-      const item = /** @type ARCHistoryRequest */ (generator.generateHistoryObject());
+      const item = /** @type ARCHistoryRequest */ (generator.http.history());
       element[internals.appendItems]([item]);
 
       const copy = { ...item };
@@ -117,7 +117,7 @@ describe('HistoryListMixin', () => {
     });
 
     it('adds older item to an existing group', () => {
-      const item = /** @type ARCHistoryRequest */ (generator.generateHistoryObject());
+      const item = /** @type ARCHistoryRequest */ (generator.http.history());
       element[internals.appendItems]([item]);
 
       const copy = { ...item };
@@ -131,7 +131,7 @@ describe('HistoryListMixin', () => {
     });
 
     it('adds newer group', () => {
-      const item = /** @type ARCHistoryRequest */ (generator.generateHistoryObject());
+      const item = /** @type ARCHistoryRequest */ (generator.http.history());
       const d = new Date();
       d.setHours(0, 0, 0, 0);
       item.midnight = d.getTime();
@@ -147,7 +147,7 @@ describe('HistoryListMixin', () => {
     });
 
     it('adds older group', () => {
-      const item = /** @type ARCHistoryRequest */ (generator.generateHistoryObject());
+      const item = /** @type ARCHistoryRequest */ (generator.http.history());
       const d = new Date();
       d.setHours(0, 0, 0, 0);
       item.midnight = d.getTime();
@@ -166,7 +166,7 @@ describe('HistoryListMixin', () => {
       let called = false;
       // @ts-ignore
       element.notifyResize = () => { called = true; };
-      const item = /** @type ARCHistoryRequest */ (generator.generateHistoryObject());
+      const item = /** @type ARCHistoryRequest */ (generator.http.history());
       element[internals.appendItems]([item]);
       assert.isTrue(called);
     });
@@ -179,7 +179,7 @@ describe('HistoryListMixin', () => {
     });
 
     it('ignores the change when the type is not history', () => {
-      const item = /** @type ARCHistoryRequest */ (generator.generateHistoryObject());
+      const item = /** @type ARCHistoryRequest */ (generator.http.history());
       element[internals.appendItems]([item]);
       const copy = { ...item };
       copy.method = 'test';
@@ -193,9 +193,9 @@ describe('HistoryListMixin', () => {
     });
 
     it('ignores the changed is not history', () => {
-      const item = /** @type ARCHistoryRequest */ (generator.generateHistoryObject());
+      const item = /** @type ARCHistoryRequest */ (generator.http.history());
       element[internals.appendItems]([item]);
-      const other = /** @type ARCSavedRequest */ (generator.generateSavedItem());
+      const other = /** @type ARCSavedRequest */ (generator.http.saved());
       ArcModelEvents.Request.State.update(document.body, 'saved', {
         id: other._id,
         rev: other._rev,
@@ -205,17 +205,17 @@ describe('HistoryListMixin', () => {
     });
 
     it('adds the request to the empty list', () => {
-      const item = /** @type ARCHistoryRequest */ (generator.generateHistoryObject());
+      const item = generator.http.history();
       ArcModelEvents.Request.State.update(document.body, 'history', {
         id: item._id,
         rev: item._rev,
-        item
+        item,
       });
       assert.lengthOf(element.requests, 1);
     });
 
     it('adds the request to the an existing list', () => {
-      const item = /** @type ARCHistoryRequest */ (generator.generateHistoryObject());
+      const item = /** @type ARCHistoryRequest */ (generator.http.history());
       element[internals.appendItems]([item]);
       const copy = { ...item };
       copy._id = 'test-id';
@@ -228,7 +228,7 @@ describe('HistoryListMixin', () => {
     });
 
     it('updates the same request', () => {
-      const item = /** @type ARCHistoryRequest */ (generator.generateHistoryObject());
+      const item = /** @type ARCHistoryRequest */ (generator.http.history());
       element[internals.appendItems]([item]);
       const copy = { ...item };
       copy.method = 'test';
@@ -261,7 +261,7 @@ describe('HistoryListMixin', () => {
     });
 
     it('removes a request from the list of requests', () => {
-      const item = /** @type ARCHistoryRequest */ (generator.generateHistoryObject());
+      const item = /** @type ARCHistoryRequest */ (generator.http.history());
       item._rev = 'test-rev';
       const copy = { ...item };
       copy._id = 'other';
@@ -272,7 +272,7 @@ describe('HistoryListMixin', () => {
     });
 
     it('removes the group when no more items', () => {
-      const item = /** @type ARCHistoryRequest */ (generator.generateHistoryObject());
+      const item = /** @type ARCHistoryRequest */ (generator.http.history());
       item._rev = 'test-rev';
       element[internals.appendItems]([item]);
       ArcModelEvents.Request.State.delete(document.body, 'history', item._id, item._rev);
@@ -280,7 +280,7 @@ describe('HistoryListMixin', () => {
     });
 
     it('removes an item from the middle of the list', () => {
-      const items = /** @type ARCHistoryRequest[] */ (generator.generateHistoryRequestsData());
+      const items = /** @type ARCHistoryRequest[] */ (generator.http.listHistory());
       element[internals.appendItems](items);
       const item = items[10];
       item._rev = 'test-rev';
@@ -297,7 +297,7 @@ describe('HistoryListMixin', () => {
   describe('[toggleHistoryGroupHandler]()', () => {
     let element = /** @type HistoryPanelElement */(null);
     beforeEach(async () => {
-      const items = /** @type ARCHistoryRequest[] */ (generator.generateHistoryRequestsData());
+      const items = /** @type ARCHistoryRequest[] */ (generator.http.listHistory());
       element = await requestsFixture(items);
     });
 
@@ -318,7 +318,7 @@ describe('HistoryListMixin', () => {
   describe('[toggleHistoryGroupHandler]()', () => {
     let element = /** @type HistoryPanelElement */(null);
     beforeEach(async () => {
-      const items = /** @type ARCHistoryRequest[] */ (generator.generateHistoryRequestsData());
+      const items = /** @type ARCHistoryRequest[] */ (generator.http.listHistory());
       element = await draggableRequestsFixture(items);
     });
 

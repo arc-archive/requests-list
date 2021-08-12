@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-param-reassign */
 import { fixture, assert, html, nextFrame, oneEvent } from '@open-wc/testing';
-import { DataGenerator } from '@advanced-rest-client/arc-data-generator';
+import { ArcMock } from '@advanced-rest-client/arc-data-generator';
 import { ArcNavigationEventTypes, ArcModelEvents, ArcModelEventTypes } from '@advanced-rest-client/arc-events';
 import '@advanced-rest-client/arc-models/project-model.js';
 import '@advanced-rest-client/arc-models/request-model.js';
@@ -15,7 +15,7 @@ import { internals } from '../index.js';
 /** @typedef {import('lit-html').TemplateResult} TemplateResult */
 
 describe('RequestsListMixin (saved)', () => {
-  const generator = new DataGenerator();
+  const generator = new ArcMock();
 
   /**
    * @returns {TemplateResult}
@@ -92,9 +92,7 @@ describe('RequestsListMixin (saved)', () => {
     });
 
     it('returns true when has requests', () => {
-      element.requests = /** @type ARCSavedRequest[] */ (generator.generateHistoryRequestsData({
-        requestsSize: 2
-      }));
+      element.requests = generator.http.listSaved(2);
       assert.isTrue(element.hasRequests);
     });
   });
@@ -139,9 +137,7 @@ describe('RequestsListMixin (saved)', () => {
 
     it('returns selected items', async () => {
       element.selectable = true;
-      element.requests = /** @type ARCSavedRequest[] */ (generator.generateHistoryRequestsData({
-        requestsSize: 2
-      }));
+      element.requests = generator.http.listSaved();
       await nextFrame();
       const node = /** @type HTMLElement */ (element.shadowRoot.querySelector('.request-list-item'));
       node.click();
@@ -193,14 +189,13 @@ describe('RequestsListMixin (saved)', () => {
 
   describe('[projectChangeHandler]()', () => {
     before(async () => {
-      await generator.insertProjectsData({
-        projectsSize: 20,
-        autoRequestId: true
+      await generator.store.insertProjects(20, {
+        autoRequestId: true,
       });
     });
 
     after(async () => {
-      await generator.destroySavedRequestData();
+      await generator.store.destroySaved();
     });
 
     let element = /** @type SavedPanelElement */(null);
@@ -287,7 +282,7 @@ describe('RequestsListMixin (saved)', () => {
     function setupRequests(element) {
       const requests = [];
       for (let i = 0; i < 5; i++) {
-        const request = generator.generateSavedItem({});
+        const request = generator.http.saved();
         request.projects = [element.project._id];
         element.project.requests.push(request._id);
         requests.push(request);
@@ -298,7 +293,7 @@ describe('RequestsListMixin (saved)', () => {
     let element = /** @type SavedPanelElement */(null);
     beforeEach(async () => {
       element = await noAutoFixture();
-      element.project = generator.createProjectObject();
+      element.project = generator.http.project();
       element.type = 'project';
       element.project.requests = [];
       setupRequests(element);
@@ -345,17 +340,13 @@ describe('RequestsListMixin (saved)', () => {
     let project;
     let requests;
     before(async () => {
-      const result = await generator.insertSavedRequestData({
-        forceProject: true,
-        projectsSize: 1,
-        requestsSize: 3
-      });
+      const result = await generator.store.insertSaved(3, 1, { forceProject: true });
       requests = result.requests;
       [project] = result.projects;
     });
     
     after(async () => {
-      await generator.destroySavedRequestData();
+      await generator.store.destroySaved();
     });
     
     let element = /** @type SavedPanelElement */(null);
@@ -399,17 +390,15 @@ describe('RequestsListMixin (saved)', () => {
     let project;
     let requests;
     before(async () => {
-      const result = await generator.insertSavedRequestData({
+      const result = await generator.store.insertSaved(3, 1, {
         forceProject: true,
-        projectsSize: 1,
-        requestsSize: 3
       });
       requests = result.requests;
       [project] = result.projects;
     });
 
     after(async () => {
-      await generator.destroySavedRequestData();
+      await generator.store.destroySaved();
     });
 
     let element = /** @type SavedPanelElement */(null);
@@ -446,15 +435,13 @@ describe('RequestsListMixin (saved)', () => {
       element = await noAutoFixture();
       element.type = 'project';
       element.projectId = projectId;
-      const requests = generator.generateRequests({
-        requestsSize: 10
-      });
+      const requests = generator.http.listSaved(10);
       requests.forEach((item) => { item.projects = [projectId]; });
       element.requests = requests;
     });
 
     function genProjectItem() {
-      const item = generator.generateSavedItem();
+      const item = generator.http.saved();
       // @ts-ignore
       item._rev = 'test';
       item.projects = [projectId];
@@ -503,7 +490,7 @@ describe('RequestsListMixin (saved)', () => {
 
     it('adds new item to requests array at position', () => {
       const item = genProjectItem();
-      const project = generator.createProjectObject();
+      const project = generator.http.project();
       project._id = projectId;
       project.requests = element.requests.map((it) => it._id);
       project.requests.splice(1, 0, item._id);
@@ -557,9 +544,7 @@ describe('RequestsListMixin (saved)', () => {
   describe('[requestChangedHandler]()', () => {
     let element = /** @type SavedPanelElement */(null);
     beforeEach(async () => {
-      const data = /** @type ARCSavedRequest[] */ (generator.generateRequests({
-        requestsSize: 2
-      }));
+      const data = generator.http.listSaved(2);
       element = await noAutoFixture();
       element.requests = data;
       await nextFrame();
@@ -588,9 +573,7 @@ describe('RequestsListMixin (saved)', () => {
     let element = /** @type SavedPanelElement */(null);
     beforeEach(async () => {
       element = await noAutoFixture();
-      element.requests = generator.generateRequests({
-        requestsSize: 10
-      });
+      element.requests = generator.http.listSaved(10);
     });
 
     it('calls [requestChanged]()', async () => {
@@ -623,14 +606,11 @@ describe('RequestsListMixin (saved)', () => {
 
   describe('[requestChangedHandler]() with data store', () => {
     before(async () => {
-      await generator.insertSavedRequestData({
-        projectsSize: 1,
-        requestsSize: 10,
-      });
+      await generator.store.insertSaved(10, 1);
     });
     
     after(async () => {
-      await generator.destroySavedRequestData();
+      await generator.store.destroySaved();
     });
 
     let element = /** @type SavedPanelElement */(null);
@@ -656,20 +636,18 @@ describe('RequestsListMixin (saved)', () => {
     let element = /** @type SavedPanelElement */(null);
     beforeEach(async () => {
       element = await noAutoFixture();
-      element.requests = generator.generateRequests({
-        requestsSize: 10
-      });
+      element.requests = generator.http.listSaved(10);
     });
 
     it('adds new request to empty list', () => {
       element.requests = undefined;
-      const item = /** @type ARCSavedRequest */ (generator.generateSavedItem());
+      const item = generator.http.saved();
       element[internals.requestChanged](item);
       assert.lengthOf(element.requests, 1);
     });
 
     it('adds new request existing list', () => {
-      const item = /** @type ARCSavedRequest */ (generator.generateSavedItem());
+      const item = generator.http.saved();
       element[internals.requestChanged](item);
       assert.lengthOf(element.requests, 11);
     });
@@ -711,13 +689,11 @@ describe('RequestsListMixin (saved)', () => {
   describe('content rendering', () => {
     describe('selectable mode', () => {
       before(async () => {
-        await generator.insertSavedRequestData({
-          requestsSize: 10,
-        });
+        await generator.store.insertSaved(10);
       });
       
       after(async () => {
-        await generator.destroySavedRequestData();
+        await generator.store.destroySaved();
       });
 
       let element = /** @type SavedPanelElement */(null);
@@ -766,13 +742,11 @@ describe('RequestsListMixin (saved)', () => {
 
     describe('listActions mode', () => {
       before(async () => {
-        await generator.insertSavedRequestData({
-          requestsSize: 10,
-        });
+        await generator.store.insertSaved(10);
       });
       
       after(async () => {
-        await generator.destroySavedRequestData();
+        await generator.store.destroySaved();
       });
 
       let element = /** @type SavedPanelElement */(null);
@@ -834,9 +808,7 @@ describe('RequestsListMixin (saved)', () => {
   describe('[dragStartHandler]()', () => {
     let element = /** @type SavedPanelElement */(null);
     beforeEach(async () => {
-      const data = /** @type ARCSavedRequest[] */ (generator.generateRequests({
-        requestsSize: 2
-      }));
+      const data = /** @type ARCSavedRequest[] */ (generator.http.listSaved(2));
       element = await noAutoFixture();
       element.requests = data;
       element.draggableEnabled = true;
@@ -920,14 +892,11 @@ describe('RequestsListMixin (saved)', () => {
 
   describe('[loadPage]()', () => {
     before(async () => {
-      await generator.insertSavedRequestData({
-        projectsSize: 1,
-        requestsSize: 40,
-      });
+      await generator.store.insertSaved(40, 1);
     });
     
     after(async () => {
-      await generator.destroySavedRequestData();
+      await generator.store.destroySaved();
     });
 
     let element = /** @type SavedPanelElement */(null);

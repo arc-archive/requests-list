@@ -1,7 +1,7 @@
 
 import { html } from 'lit-html';
 import { DemoPage } from '@advanced-rest-client/arc-demo-helper';
-import { DataGenerator } from '@advanced-rest-client/arc-data-generator';
+import { ArcMock } from '@advanced-rest-client/arc-data-generator';
 import '@advanced-rest-client/arc-demo-helper/arc-interactive-demo.js';
 import '@advanced-rest-client/arc-models/rest-api-model.js';
 import '@anypoint-web-components/anypoint-button/anypoint-button.js';
@@ -20,7 +20,7 @@ class ComponentPage extends DemoPage {
       'listActions', 'listType',
     ]);
     this.componentName = 'REST APIs list';
-    this.generator = new DataGenerator();
+    this.generator = new ArcMock();
     this.compatibility = false;
     this.listActions = false;
     this.listType = 'default';
@@ -33,14 +33,12 @@ class ComponentPage extends DemoPage {
   }
 
   async generateRequests() {
-    await this.generator.insertApiData({
-      size: 100
-    });
+    await this.generator.store.insertApis(100);
     ImportEvents.dataImported(document.body);
   }
 
   async deleteData() {
-    await this.generator.destroyAllApiData();
+    await this.generator.store.destroyApisAll();
     ArcModelEvents.destroyed(document.body, 'all');
   }
 

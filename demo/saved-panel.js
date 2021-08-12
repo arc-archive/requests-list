@@ -1,7 +1,7 @@
 
 import { html } from 'lit-html';
 import { DemoPage } from '@advanced-rest-client/arc-demo-helper';
-import { DataGenerator } from '@advanced-rest-client/arc-data-generator';
+import { ArcMock } from '@advanced-rest-client/arc-data-generator';
 import '@advanced-rest-client/arc-demo-helper/arc-interactive-demo.js';
 import '@advanced-rest-client/arc-models/request-model.js';
 import '@advanced-rest-client/arc-models/url-indexer.js';
@@ -24,7 +24,7 @@ class ComponentPage extends ExportHandlerMixin(DemoPage) {
       'draggableEnabled', 'dropValue',
     ]);
     this.componentName = 'Saved panel';
-    this.generator = new DataGenerator();
+    this.generator = new ArcMock();
     this.compatibility = false;
     this.listActions = false;
     this.selectable = false;
@@ -47,9 +47,7 @@ class ComponentPage extends ExportHandlerMixin(DemoPage) {
   }
 
   async generateRequests() {
-    await this.generator.insertSavedRequestData({
-      requestsSize: 100,
-    });
+    await this.generator.store.insertSaved(100);
     ImportEvents.dataImported(document.body);
   }
 

@@ -1,7 +1,7 @@
 
 import { html } from 'lit-html';
 import { DemoPage } from '@advanced-rest-client/arc-demo-helper';
-import { DataGenerator } from '@advanced-rest-client/arc-data-generator';
+import { ArcMock } from '@advanced-rest-client/arc-data-generator';
 import '@advanced-rest-client/arc-demo-helper/arc-interactive-demo.js';
 import '@advanced-rest-client/arc-models/request-model.js';
 import '@advanced-rest-client/arc-models/url-indexer.js';
@@ -19,7 +19,7 @@ class ComponentPage extends DemoPage {
       'listActions', 'selectable', 'listType',
     ]);
     this.componentName = 'History list';
-    this.generator = new DataGenerator();
+    this.generator = new ArcMock();
     this.compatibility = false;
     this.listActions = false;
     this.selectable = false;
@@ -36,24 +36,22 @@ class ComponentPage extends DemoPage {
   }
 
   async generateRequests() {
-    await this.generator.insertHistoryRequestData({
-      requestsSize: 100,
-    });
+    await this.generator.store.insertHistory(100);
     ImportEvents.dataImported(document.body);
   }
 
   async deleteData() {
-    await this.generator.destroyHistoryData();
+    await this.generator.store.destroyHistory();
     ArcModelEvents.destroyed(document.body, 'all');
   }
 
   async createHistoryItem() {
-    const item = this.generator.generateHistoryObject();
+    const item = this.generator.http.history();
     await ArcModelEvents.Request.store(document.body, 'history', item);
   }
 
   async createSavedItem() {
-    const item = this.generator.generateSavedItem();
+    const item = this.generator.http.history();
     await ArcModelEvents.Request.store(document.body, 'saved', item);
   }
 

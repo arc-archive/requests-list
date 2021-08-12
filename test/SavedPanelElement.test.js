@@ -1,5 +1,5 @@
 import { fixture, assert, html, oneEvent, nextFrame } from '@open-wc/testing';
-import { DataGenerator } from '@advanced-rest-client/arc-data-generator';
+import { ArcMock } from '@advanced-rest-client/arc-data-generator';
 import { ArcModelEvents, ArcModelEventTypes } from '@advanced-rest-client/arc-events';
 import sinon from 'sinon';
 import '@advanced-rest-client/arc-models/request-model.js';
@@ -20,7 +20,7 @@ import {
 /** @typedef {import('@anypoint-web-components/anypoint-chip-input').AnypointChipInput} AnypointChipInput */
 
 describe('SavedPanelElement', () => {
-  const generator = new DataGenerator();
+  const generator = new ArcMock();
 
   /**
    * @returns {TemplateResult}
@@ -52,14 +52,11 @@ describe('SavedPanelElement', () => {
 
   describe('content actions', () => {
     before(async () => {
-      await generator.insertSavedRequestData({
-        projectsSize: 1,
-        requestsSize: 20,
-      });
+      await generator.store.insertSaved(20, 1);
     });
     
     after(async () => {
-      await generator.destroySavedRequestData();
+      await generator.store.destroySaved();
     });
 
     let element = /** @type SavedPanelElement */(null);
@@ -178,20 +175,15 @@ describe('SavedPanelElement', () => {
     let projectId;
     let ids;
     before(async () => {
-      const result = await generator.insertSavedRequestData({
-        projectsSize: 0,
-        requestsSize: 20,
-      });
+      const result = await generator.store.insertSaved(20, 0);
       assert.lengthOf(result.projects, 0);
       ids = result.requests.map((item) => item._id);
-      const r2 = await generator.insertProjectsData({
-        projectsSize: 1,
-      });
+      const r2 = await generator.store.insertProjects(1);
       projectId = r2[0]._id;
     });
     
     after(async () => {
-      await generator.destroySavedRequestData();
+      await generator.store.destroySaved();
     });
 
     let element = /** @type SavedPanelElement */(null);

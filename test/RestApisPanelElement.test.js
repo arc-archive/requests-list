@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 
 import { fixture, assert, html, oneEvent, nextFrame } from '@open-wc/testing';
-import { DataGenerator } from '@advanced-rest-client/arc-data-generator';
+import { ArcMock } from '@advanced-rest-client/arc-data-generator';
 import '@advanced-rest-client/arc-models/rest-api-model.js';
 import { ArcNavigationEventTypes, ImportEvents, ArcModelEventTypes, ArcModelEvents } from '@advanced-rest-client/arc-events';
 import sinon from 'sinon';
@@ -16,7 +16,7 @@ import { internals } from '../index.js';
 /** @typedef {import('lit-html').TemplateResult} TemplateResult */
 
 describe('RestApisPanelElement', () => {
-  const generator = new DataGenerator();
+  const generator = new ArcMock();
 
   /**
    * @returns {TemplateResult}
@@ -84,11 +84,11 @@ describe('RestApisPanelElement', () => {
 
   describe('list with items', () => {
     before(async () => {
-      await generator.insertApiData();
+      await generator.store.insertApis();
     });
 
     after(async () => {
-      await generator.destroyAllApiData();
+      await generator.store.destroyApisAll();
     });
 
     let element = /** @type RestApisPanelElement */ (null);
@@ -163,11 +163,11 @@ describe('RestApisPanelElement', () => {
 
   describe('loadPage()', () => {
     before(async () => {
-      await generator.insertApiData();
+      await generator.store.insertApis();
     });
 
     after(async () => {
-      await generator.destroyAllApiData();
+      await generator.store.destroyApisAll();
     });
 
     let element = /** @type RestApisPanelElement */ (null);
@@ -206,11 +206,11 @@ describe('RestApisPanelElement', () => {
 
   describe('[indexUpdatedHandler]()', () => {
     before(async () => {
-      await generator.insertApiData();
+      await generator.store.insertApis();
     });
 
     after(async () => {
-      await generator.destroyAllApiData();
+      await generator.store.destroyApisAll();
     });
 
     let element = /** @type RestApisPanelElement */ (null);
@@ -220,7 +220,7 @@ describe('RestApisPanelElement', () => {
 
     it('adds new item to the list', async () => {
       assert.lengthOf(element.items, 25);
-      const item = /** @type ARCRestApiIndex */ (generator.generateApiIndex());
+      const item = /** @type ARCRestApiIndex */ (generator.restApi.apiIndex());
       item._id = 'test-id';
       item._rev = 'test-rev';
       const record = {
@@ -234,7 +234,7 @@ describe('RestApisPanelElement', () => {
 
     it('adds new item to the empty list', async () => {
       element.items = undefined;
-      const item = /** @type ARCRestApiIndex */ (generator.generateApiIndex());
+      const item = /** @type ARCRestApiIndex */ (generator.restApi.apiIndex());
       item._id = 'test-id';
       item._rev = 'test-rev';
       const record = {
@@ -276,11 +276,11 @@ describe('RestApisPanelElement', () => {
 
   describe('[indexDeletedHandler]()', () => {
     before(async () => {
-      await generator.insertApiData();
+      await generator.store.insertApis();
     });
 
     after(async () => {
-      await generator.destroyAllApiData();
+      await generator.store.destroyApisAll();
     });
 
     let element = /** @type RestApisPanelElement */ (null);
@@ -310,7 +310,7 @@ describe('RestApisPanelElement', () => {
     let element = /** @type RestApisPanelElement */ (null);
     beforeEach(async () => {
       element = await noAutoFixture();
-      const items = generator.generateApiIndexList();
+      const items = generator.restApi.apiIndexList();
       element.items = /** @type ARCRestApiIndex[] */ (items.map((item, index) => { 
         item._id = `id-${index}`;
         // @ts-ignore
@@ -340,11 +340,11 @@ describe('RestApisPanelElement', () => {
 
   describe('[restApiDeleteHandler]()', () => {
     before(async () => {
-      await generator.insertApiData();
+      await generator.store.insertApis();
     });
 
     after(async () => {
-      await generator.destroyAllApiData();
+      await generator.store.destroyApisAll();
     });
 
     let element = /** @type RestApisPanelElement */ (null);

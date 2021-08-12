@@ -1,5 +1,5 @@
 import { fixture, assert, html } from '@open-wc/testing';
-import { DataGenerator } from '@advanced-rest-client/arc-data-generator';
+import { ArcMock } from '@advanced-rest-client/arc-data-generator';
 import '../history-panel.js'
 import { internals } from '../index.js';
 
@@ -7,7 +7,7 @@ import { internals } from '../index.js';
 /** @typedef {import('@advanced-rest-client/arc-models').ARCHistoryRequest} ARCHistoryRequest */
 
 describe('HistoryPanelElement', () => {
-  const generator = new DataGenerator();
+  const generator = new ArcMock();
 
   /**
    * @returns {Promise<HistoryPanelElement>}
@@ -33,14 +33,14 @@ describe('HistoryPanelElement', () => {
     });
 
     it('sets selected items', () => {
-      const items = /** @type ARCHistoryRequest[] */ (generator.generateHistoryRequestsData());
+      const items = /** @type ARCHistoryRequest[] */ (generator.http.listHistory());
       element[internals.appendItems](items);
       element.toggleSelection();
       assert.lengthOf(element.selectedItems, items.length);
     });
 
     it('overrides previous selection', () => {
-      const items = /** @type ARCHistoryRequest[] */ (generator.generateHistoryRequestsData());
+      const items = /** @type ARCHistoryRequest[] */ (generator.http.listHistory());
       element[internals.appendItems](items);
       element.selectedItems = [items[0]._id];
       element.toggleSelection();
@@ -48,7 +48,7 @@ describe('HistoryPanelElement', () => {
     });
 
     it('clears the selection', () => {
-      const items = /** @type ARCHistoryRequest[] */ (generator.generateHistoryRequestsData());
+      const items = /** @type ARCHistoryRequest[] */ (generator.http.listHistory());
       element[internals.appendItems](items);
       element[internals.toggleSelectAllValue] = true;
       element.toggleSelection();

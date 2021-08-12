@@ -1,5 +1,5 @@
 import { assert } from '@open-wc/testing';
-import { DataGenerator } from '@advanced-rest-client/arc-data-generator';
+import { ArcMock } from '@advanced-rest-client/arc-data-generator';
 import { 
   isProjectRequest,
   hasTwoLines,
@@ -12,33 +12,33 @@ import {
 } from '../src/Utils.js';
 
 describe('Utils', () => {
-  const generator = new DataGenerator();
+  const generator = new ArcMock();
 
   describe('isProjectRequest()', () => {
     const projectId = 'test-project';
 
     it('returns false when no project id', () => {
-      const item = generator.generateSavedItem();
+      const item = generator.http.saved();
       const result = isProjectRequest(item, undefined);
       assert.isFalse(result);
     });
 
     it('returns false when item has other projects', () => {
-      const item = generator.generateSavedItem();
+      const item = generator.http.saved();
       item.projects = ['other'];
       const result = isProjectRequest(item, projectId);
       assert.isFalse(result);
     });
 
     it('Returns true when project is on projects list', () => {
-      const item = generator.generateSavedItem();
+      const item = generator.http.saved();
       item.projects = [projectId];
       const result = isProjectRequest(item, projectId);
       assert.isTrue(result);
     });
 
     it('Returns true when project is set on legacyProject', () => {
-      const item = generator.generateSavedItem();
+      const item = generator.http.saved();
       // @ts-ignore
       item.legacyProject = projectId;
       const result = isProjectRequest(item, projectId);
@@ -198,10 +198,14 @@ describe('Utils', () => {
 
     it('Returns 0 when times equal', () => {
       const a = {
-        name: 'a'
+        name: 'a',
+        url: '',
+        method: '',
       };
       const b = {
-        name: 'a'
+        name: 'a',
+        url: '',
+        method: '',
       };
       const result = savedSort(a, b);
       assert.equal(result, 0);
@@ -209,10 +213,14 @@ describe('Utils', () => {
 
     it('Returns -1 when A time is higher', () => {
       const a = {
-        name: 'b'
+        name: 'b',
+        url: '',
+        method: '',
       };
       const b = {
-        name: 'a'
+        name: 'a',
+        url: '',
+        method: '',
       };
       const result = savedSort(a, b);
       assert.equal(result, 1);
@@ -220,19 +228,29 @@ describe('Utils', () => {
 
     it('Returns 1 when B time is higher', () => {
       const a = {
-        name: 'a'
+        name: 'a',
+        url: '',
+        method: '',
       };
       const b = {
-        name: 'b'
+        name: 'b',
+        url: '',
+        method: '',
       };
       const result = savedSort(a, b);
       assert.equal(result, -1);
     });
 
     it('Returns -1 when A is missing name', () => {
-      const a = {};
+      const a = {
+        name: undefined,
+        url: '',
+        method: '',
+      };
       const b = {
-        name: 'b'
+        name: 'b',
+        url: '',
+        method: '',
       };
       const result = savedSort(a, b);
       assert.equal(result, -1);
@@ -240,16 +258,30 @@ describe('Utils', () => {
 
     it('Returns 1 when B is missing name', () => {
       const a = {
-        name: 'b'
+        name: 'b',
+        url: '',
+        method: '',
       };
-      const b = {};
+      const b = {
+        name: undefined,
+        url: '',
+        method: '',
+      };
       const result = savedSort(a, b);
       assert.equal(result, 1);
     });
 
     it('Returns 0 when A and B is missing name', () => {
-      const a = {};
-      const b = {};
+      const a = {
+        name: undefined,
+        url: '',
+        method: '',
+      };
+      const b = {
+        name: undefined,
+        url: '',
+        method: '',
+      };
       const result = savedSort(a, b);
       assert.equal(result, 0);
     });

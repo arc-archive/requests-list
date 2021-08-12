@@ -1,5 +1,5 @@
 import { fixture, assert, html, nextFrame, oneEvent } from '@open-wc/testing';
-import { DataGenerator } from '@advanced-rest-client/arc-data-generator';
+import { ArcMock } from '@advanced-rest-client/arc-data-generator';
 import { ImportEvents, ArcModelEvents, ArcModelEventTypes } from '@advanced-rest-client/arc-events';
 import '@advanced-rest-client/arc-models/request-model.js';
 import '@advanced-rest-client/arc-models/project-model.js';
@@ -12,7 +12,7 @@ import { internals } from '../index.js';
 /** @typedef {import('@advanced-rest-client/arc-models').ARCSavedRequest} ARCSavedRequest */
 
 describe('RequestsListMixin (history)', () => {
-  const generator = new DataGenerator();
+  const generator = new ArcMock();
 
   /**
    * @returns {Promise<HistoryPanelElement>}
@@ -183,11 +183,11 @@ describe('RequestsListMixin (history)', () => {
 
   describe('query()', () => {
     before(async () => {
-      await generator.insertHistoryRequestData();
+      await generator.store.insertHistory();
     });
 
     after(async () => {
-      await generator.destroyHistoryData();
+      await generator.store.destroyHistory();
     });
 
     let element = /** @type HistoryPanelElement */(null);
@@ -275,9 +275,7 @@ describe('RequestsListMixin (history)', () => {
   describe('[updateListStyles]()', () => {
     let element = /** @type HistoryPanelElement */(null);
     beforeEach(async () => {
-      const data = generator.generateHistoryRequestsData({
-        requestsSize: 2
-      });
+      const data = generator.http.listHistory(2);
       element = await requestsFixture(data);
     });
 
@@ -369,9 +367,7 @@ describe('RequestsListMixin (history)', () => {
   describe('[requestChangedHandler]()', () => {
     let element = /** @type HistoryPanelElement */(null);
     beforeEach(async () => {
-      const data = generator.generateHistoryRequestsData({
-        requestsSize: 2
-      });
+      const data = generator.http.listHistory(2);
       element = await modelFixture(data);
     });
 

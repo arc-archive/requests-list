@@ -1,4 +1,8 @@
-# Requests list
+# Deprecated
+
+This component is deprecated. Use `@advanced-rest-client/app` instead.
+
+----
 
 The ARC requests list module contains an UI and logic to render requests list in various contexts (saved list. history list, project list).
 
